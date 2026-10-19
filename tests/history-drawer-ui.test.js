@@ -149,6 +149,20 @@ test('Order History UI & Integration Tests', async (t) => {
             htmlContent.includes('https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js'),
             'QR code generator must use CDN to avoid 404 HTML syntax errors'
         );
+
+        // 5. DOM Structure: Modals are closed before header/main
+        const priceModalIdx = htmlContent.indexOf('id="price-explorer-modal"');
+        const headerIdx = htmlContent.indexOf('<header');
+        assert.ok(priceModalIdx > -1 && headerIdx > priceModalIdx, 'Header must follow modals in DOM');
+        const segmentBetween = htmlContent.substring(priceModalIdx, headerIdx);
+        // Count opening and closing divs between price modal and header
+        const openDivs = (segmentBetween.match(/<div[\s>]/g) || []).length;
+        const closeDivs = (segmentBetween.match(/<\/div>/g) || []).length;
+        assert.ok(
+            closeDivs >= openDivs,
+            `Modals must be fully closed before header (open=${openDivs}, close=${closeDivs})`
+        );
     });
 });
+
 
