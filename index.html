@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxTabac Reserve — 2026 Luxembourg Official Catalog & Revolut Checkout</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Standalone Offline QR Code Generator (ISO/IEC 18004 compliant) -->
+    <script src="qrcode.min.js"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b;
+            color: #f4f4f5;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #18181b;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #52525b;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.8) sepia(100%) saturate(300%) hue-rotate(350deg);
+            cursor: pointer;
+        }
+
+        /* Style native select optgroups for dark mode */
+        select optgroup {
+            background-color: #18181b;
+            color: #fbbf24;
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        select option {
+            background-color: #09090b;
+            color: #f4f4f5;
+            padding: 6px;
+            font-weight: 400;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-amber-500 selection:text-zinc-950">
+
+    <!-- 18+ Age Verification Modal -->
+    <div id="age-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
+        <div
+            class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl fade-in">
+            <div
+                class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto mb-5 text-amber-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800 text-zinc-200 text-xs font-semibold tracking-wider uppercase mb-3">
+                <span>🇱🇺 Luxembourg Legal Requirement</span>
+                <span class="text-amber-400">18+</span>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-2">Age Verification Required</h2>
+            <p class="text-sm text-zinc-400 mb-6 leading-relaxed">
+                In accordance with Luxembourg law (<em>Loi modifiée du 11 août 2006 relative à la lutte antitabac</em>),
+                the sale and ordering of tobacco products is strictly restricted to individuals aged <strong>18 years or
+                    older</strong>.
+            </p>
+            <div id="age-buttons-row" class="flex flex-col sm:flex-row gap-3">
+                <button id="btn-age-confirm"
+                    class="flex-1 py-3.5 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-sm transition shadow-lg shadow-amber-500/15">
+                    I am 18 or older — Enter
+                </button>
+                <button id="btn-age-decline"
+                    class="py-3.5 px-5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium text-sm transition">
+                    Exit
+                </button>
+            </div>
+            <div id="age-denied-msg"
+                class="hidden mt-4 text-xs text-red-300 bg-red-950/70 border border-red-800/80 rounded-2xl p-4 space-y-2.5 text-center">
+                <p class="font-semibold text-red-200">Access Denied: Age Restriction 18+</p>
+                <p class="text-zinc-400 text-[11px] leading-relaxed">
+                    Under Luxembourg Law (Lutte antitabac), access to tobacco pricing and orders is prohibited for
+                    minors. You will now be redirected.
+                </p>
+                <a href="https://www.google.com"
+                    class="inline-block px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition">
+                    Leave Website Now
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Searchable Luxembourg 2026 Price List Explorer Modal -->
+    <div id="price-explorer-modal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-3 sm:p-6">
+        <div
+            class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-3xl w-full max-h-[88vh] flex flex-col shadow-2xl fade-in overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-5 sm:p-6 border-b border-zinc-800 flex items-center justify-between gap-4 bg-zinc-950/60">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/30">🇱🇺
+                            Official 2026 Banderole</span>
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Luxembourg Tobacco Price List</h3>
+                    </div>
+                    <p class="text-xs text-zinc-400 mt-1">Click any item to select it directly into your order form.</p>
+                </div>
+                <button type="button" id="btn-close-explorer"
+                    class="p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition"
+                    aria-label="Close catalog">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="p-4 border-b border-zinc-800 bg-zinc-900">
+                <div class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input type="text" id="explorer-search"
+                        placeholder="Search brand, variant, format (e.g. Marlboro, Ducal, 8x25, 100s, Pot)..."
+                        class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition">
+                </div>
+            </div>
+
+            <!-- Catalog Table List -->
+            <div id="explorer-list-container" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+                <!-- Populated dynamically via JS -->
+            </div>
+
+            <!-- Modal Footer -->
+            <div
+                class="p-4 border-t border-zinc-800 bg-zinc-950/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400">
+                <span>Don't see your exact cigarette brand or duty-free item?</span>
+                <button type="button" id="btn-explorer-manual"
+                    class="px-4 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 text-amber-300 font-semibold transition">
+                    + Switch to Quick Manual Input
+                </button>
+            </div>
+        </div>
+    <!-- Slide-Over Order History Drawer -->
+    <div id="history-drawer" class="fixed inset-0 z-50 overflow-hidden pointer-events-none transition-all duration-300">
+        <!-- Backdrop -->
+        <div id="history-drawer-backdrop"
+            class="absolute inset-0 bg-black/75 backdrop-blur-sm opacity-0 transition-opacity duration-300 ease-in-out cursor-pointer"></div>
+
+        <div class="fixed inset-y-0 right-0 max-w-full flex pl-10 pointer-events-auto">
+            <div id="history-drawer-panel"
+                class="w-screen max-w-md bg-zinc-950 border-l border-zinc-800 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out">
+
+                <!-- Drawer Header -->
+                <div class="p-5 border-b border-zinc-800 flex items-center justify-between gap-4 bg-zinc-900/60">
+                    <div class="flex items-center gap-2.5">
+                        <div
+                            class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-base font-bold text-white">Order History</h3>
+                                <span id="drawer-orders-count-badge"
+                                    class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">0</span>
+                            </div>
+                            <p class="text-xs text-zinc-400">Stored in local SQLite database on Vercel</p>
+                        </div>
+                    </div>
+                    <button type="button" id="btn-close-history"
+                        class="w-9 h-9 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 flex items-center justify-center transition"
+                        title="Close drawer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- EU Cross-Border Allowance Summary in Drawer -->
+                <div class="p-4 bg-zinc-900/40 border-b border-zinc-800/80">
+                    <div class="flex items-center justify-between text-xs mb-1">
+                        <span class="text-zinc-400 font-medium">EU Cross-Border Guideline</span>
+                        <span id="drawer-allowance-status" class="font-mono text-emerald-400 font-bold">800 cigs threshold</span>
+                    </div>
+                    <p class="text-[11px] text-zinc-500 leading-snug">
+                        Standard legal personal transport volume for cross-border transit between EU member states (Directive 2008/118/EC).
+                    </p>
+                </div>
+
+                <!-- Drawer Content Area -->
+                <div class="flex-1 overflow-y-auto p-4 space-y-3.5" id="history-drawer-content">
+                    <!-- Loading Skeleton -->
+                    <div id="history-loading" class="space-y-3 py-6">
+                        <div class="h-24 bg-zinc-900/80 border border-zinc-800 rounded-2xl animate-pulse"></div>
+                        <div class="h-24 bg-zinc-900/80 border border-zinc-800 rounded-2xl animate-pulse"></div>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="history-empty" class="hidden text-center py-12 px-4 space-y-3">
+                        <div
+                            class="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto text-zinc-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                        </div>
+                        <h4 class="text-sm font-semibold text-zinc-300">No Past Orders Found</h4>
+                        <p class="text-xs text-zinc-500 max-w-xs mx-auto">
+                            When you generate a payment QR code, your order will automatically be recorded in the local SQLite database.
+                        </p>
+                    </div>
+
+                    <!-- Orders List Container -->
+                    <div id="history-list" class="space-y-3"></div>
+                </div>
+
+                <!-- Drawer Footer -->
+                <div
+                    class="p-4 border-t border-zinc-800 bg-zinc-900/70 flex items-center justify-between text-xs text-zinc-400">
+                    <span class="flex items-center gap-1.5 text-[11px]">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        <span>SQLite DB Connected</span>
+                    </span>
+                    <button type="button" id="btn-refresh-history"
+                        class="px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium transition flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-zinc-400" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        <span>Refresh</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Slip View Modal -->
+    <div id="receipt-modal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div
+            class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 text-zinc-200 shadow-2xl fade-in overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between pb-4 border-b border-zinc-800">
+                <div class="flex items-center gap-2">
+                    <span class="text-amber-400 font-bold">LUXTABAC</span>
+                    <span class="text-xs text-zinc-400">Official Receipt Slip</span>
+                </div>
+                <button type="button" id="btn-close-receipt"
+                    class="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 flex items-center justify-center">
+                    ✕
+                </button>
+            </div>
+
+            <div id="receipt-content-area" class="py-4 overflow-y-auto font-mono text-xs space-y-3">
+                <!-- Rendered Receipt Body -->
+            </div>
+
+            <div class="pt-4 border-t border-zinc-800 flex gap-2">
+                <button type="button" id="btn-copy-receipt"
+                    class="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs transition">
+                    Copy Receipt Text
+                </button>
+                <button type="button" id="btn-print-receipt"
+                    class="py-2.5 px-4 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium text-xs transition">
+                    Print Slip
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Navigation / Header -->
+    <header class="border-b border-zinc-800/80 bg-zinc-950/85 backdrop-blur-md sticky top-0 z-30">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-zinc-950 font-black shadow-md shadow-amber-500/10 relative">
+                    <span>LU</span>
+                    <span class="absolute -bottom-1 -right-1 text-[10px] leading-none">🇱🇺</span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">LUXTABAC RESERVE</h1>
+                        <span
+                            class="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/30">2026
+                            TARIF LU</span>
+                    </div>
+                    <p class="text-xs text-zinc-400">Official Luxembourg Tax-Stamp Prices & Revolut Transfer</p>
+                </div>
+            </div>
+
+            <!-- Action Controls: Price Explorer, Revolut Tag Settings & Step Badges -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button type="button" id="btn-open-explorer"
+                    class="px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-xs font-semibold text-zinc-200 transition flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    <span>LU Price List</span>
+                </button>
+
+                <!-- Order History Drawer Button -->
+                <button type="button" id="btn-open-history"
+                    class="px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-xs font-semibold text-zinc-200 transition flex items-center gap-1.5 relative"
+                    title="View saved orders in SQLite & 1-click re-order">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-400" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Orders</span>
+                    <span id="history-badge"
+                        class="hidden px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-500 text-zinc-950">0</span>
+                </button>
+
+                <!-- Merchant Revolut Tag Config Button -->
+                <div class="relative">
+                    <button type="button" id="btn-toggle-revtag"
+                        class="px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs font-mono text-blue-400 transition flex items-center gap-1"
+                        title="Configure recipient Revolut @revtag">
+                        <span>@</span><span id="header-revtag-label">vladimtul</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-zinc-500 ml-0.5" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </button>
+
+                    <!-- Revolut Tag Popover -->
+                    <div id="revtag-popover"
+                        class="hidden absolute right-0 mt-2 w-64 bg-zinc-900 border border-zinc-700 rounded-2xl p-4 shadow-2xl z-40">
+                        <label for="input-merchant-revtag"
+                            class="block text-xs font-semibold text-zinc-200 mb-1">Recipient Revolut @Revtag</label>
+                        <p class="text-[11px] text-zinc-400 mb-2.5">Customize the Revolut.me account that receives the
+                            QR transfer.</p>
+                        <div class="flex items-center gap-1.5">
+                            <span
+                                class="text-xs font-mono text-zinc-400 bg-zinc-950 px-2.5 py-2 rounded-lg border border-zinc-800">@</span>
+                            <input type="text" id="input-merchant-revtag" value="vladimtul"
+                                class="w-full bg-zinc-950 border border-zinc-800 focus:border-blue-500 rounded-lg px-2.5 py-1.5 text-xs font-mono text-white outline-none">
+                            <button type="button" id="btn-save-revtag"
+                                class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step Indicator -->
+                <div class="hidden sm:flex items-center gap-1.5 text-xs font-medium pl-2 border-l border-zinc-800">
+                    <span id="step-1-badge"
+                        class="px-2.5 py-1 rounded-lg bg-amber-500 text-zinc-950 font-semibold transition">1.
+                        Order</span>
+                    <span class="text-zinc-600">/</span>
+                    <span id="step-2-badge" class="px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-400 transition">2.
+                        Revolut QR</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 py-7">
+
+        <!-- Toast Notification -->
+        <div id="toast-banner"
+            class="hidden fixed bottom-5 right-5 z-50 bg-zinc-900 border border-amber-500/40 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 fade-in">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+            <span id="toast-text" class="text-sm font-medium">Copied to clipboard!</span>
+        </div>
+
+        <!-- VIEW 1: ORDER BUILDER & FORM -->
+        <section id="order-view" class="fade-in">
+            <div class="bg-zinc-900/90 border border-zinc-800 rounded-3xl p-5 sm:p-8 shadow-2xl">
+
+                <!-- Card Header & Live Grand Total -->
+                <div
+                    class="mb-6 pb-5 border-b border-zinc-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 text-xs text-amber-400 font-medium mb-1">
+                            <span>🇱🇺 Official Luxembourg Market Pricing</span>
+                            <span>•</span>
+                            <span>Zero Duty Surcharge</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">Configure Your Cigarette Order</h2>
+                        <p class="text-sm text-zinc-400 mt-0.5">Select from the 2026 Luxembourg catalog or switch to
+                            manual input if your brand is unlisted.</p>
+                    </div>
+                    <div
+                        class="bg-zinc-950 border border-zinc-800 rounded-2xl px-4 py-3 text-right self-start sm:self-auto min-w-[165px]">
+                        <span id="live-total-label"
+                            class="text-[11px] uppercase tracking-wider text-zinc-400 block">Current Item Total</span>
+                        <span id="live-total" class="text-xl font-extrabold text-amber-400 font-mono">€77.00</span>
+                        <span id="live-unit-subtext" class="block text-[11px] text-zinc-500 mt-0.5">1 Carton (200
+                            cigs)</span>
+                    </div>
+                </div>
+
+                <!-- Validation Error Alert -->
+                <div id="form-error"
+                    class="hidden mb-6 p-4 rounded-2xl bg-red-950/60 border border-red-800/80 text-red-200 text-sm flex items-start gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400 shrink-0 mt-0.5"
+                        viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span id="form-error-text">Please complete all required fields.</span>
+                </div>
+
+                <form id="cigarette-order-form" class="space-y-6" novalidate>
+
+                    <!-- Row 1: Customer Name & Delivery Date -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+                        <div class="sm:col-span-7">
+                            <label for="customer-name"
+                                class="block text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-2">
+                                Full Name <span class="text-amber-500">*</span>
+                            </label>
+                            <input type="text" id="customer-name" required placeholder="e.g., Jean-Luc Schmit"
+                                class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 rounded-xl px-4 py-3.5 text-white placeholder-zinc-600 text-sm outline-none transition">
+                        </div>
+
+                        <div class="sm:col-span-5">
+                            <label for="delivery-date"
+                                class="block text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-2">
+                                Date of Delivery <span class="text-amber-500">*</span>
+                            </label>
+                            <input type="date" id="delivery-date" required
+                                class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 rounded-xl px-4 py-3.5 text-white text-sm outline-none transition">
+                        </div>
+                    </div>
+
+                    <!-- Product Selection Panel -->
+                    <div class="bg-zinc-950/70 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 space-y-5">
+
+                        <!-- Mode Switch Header -->
+                        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-zinc-800/80">
+                            <div>
+                                <span
+                                    class="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                                    <span>Brand & Model Selection</span>
+                                    <span id="mode-indicator-pill"
+                                        class="px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-400 text-[10px] border border-amber-500/30">LU
+                                        2026 Catalog</span>
+                                </span>
+                            </div>
+
+                            <!-- Quick Toggle Button: Catalog vs Manual Input -->
+                            <div class="flex items-center gap-2">
+                                <button type="button" id="btn-mode-catalog"
+                                    class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 text-zinc-950 transition">
+                                    🇱🇺 Dropdown List
+                                </button>
+                                <button type="button" id="btn-mode-manual"
+                                    class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white transition flex items-center gap-1">
+                                    <span>+ Manual Input</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- MODE A: LUXEMBOURG CATALOG DROPDOWN -->
+                        <div id="catalog-select-wrapper" class="space-y-3">
+                            <label for="lu-catalog-select" class="block text-xs text-zinc-400">
+                                Choose your cigarette brand & format below (or select <strong>"+ Missing from list?
+                                    Quick Manual Input"</strong> at the bottom):
+                            </label>
+                            <div class="relative">
+                                <select id="lu-catalog-select"
+                                    class="w-full bg-zinc-900 border border-zinc-700 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 rounded-xl px-4 py-3.5 text-white text-sm outline-none transition cursor-pointer">
+                                    <!-- Dynamically populated from LU_2026_CATALOG -->
+                                </select>
+                            </div>
+
+                            <!-- Selected Product Price Breakdown Pill Bar -->
+                            <div id="catalog-info-bar"
+                                class="flex flex-wrap items-center justify-between gap-2 bg-zinc-900/90 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-zinc-400">Selected:</span>
+                                    <span id="info-selected-name" class="font-semibold text-white">Marlboro Red
+                                        (10x20)</span>
+                                </div>
+                                <div class="flex items-center gap-3 font-mono">
+                                    <span id="info-pack-badge" class="text-zinc-300">Pack: <strong
+                                            class="text-amber-400">€7.70</strong></span>
+                                    <span class="text-zinc-700">|</span>
+                                    <span id="info-carton-badge" class="text-zinc-300">Carton: <strong
+                                            class="text-emerald-400">€77.00</strong></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MODE B: QUICK MANUAL INPUT (Hidden by default unless toggled or selected) -->
+                        <div id="manual-input-wrapper" class="hidden space-y-4 pt-1 fade-in">
+                            <div
+                                class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200 flex items-center justify-between gap-2">
+                                <span><strong>Manual Input Active:</strong> Enter any unlisted brand, special duty-free
+                                    edition, or custom price.</span>
+                                <button type="button" id="btn-back-to-catalog"
+                                    class="underline text-amber-400 hover:text-amber-300 shrink-0 font-semibold">Back to
+                                    LU List</button>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="manual-brand"
+                                        class="block text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-1.5">
+                                        Custom Brand <span class="text-amber-500">*</span>
+                                    </label>
+                                    <input type="text" id="manual-brand" placeholder="e.g., Parliament, Sobranie, Vogue"
+                                        class="w-full bg-zinc-900 border border-zinc-700 focus:border-amber-500 rounded-xl px-3.5 py-3 text-white placeholder-zinc-500 text-sm outline-none transition">
+                                </div>
+                                <div>
+                                    <label for="manual-model"
+                                        class="block text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-1.5">
+                                        Model / Variant <span class="text-amber-500">*</span>
+                                    </label>
+                                    <input type="text" id="manual-model"
+                                        placeholder="e.g., Night Blue, Black Russian, Menthol"
+                                        class="w-full bg-zinc-900 border border-zinc-700 focus:border-amber-500 rounded-xl px-3.5 py-3 text-white placeholder-zinc-500 text-sm outline-none transition">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="manual-format-desc"
+                                        class="block text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-1.5">
+                                        Custom Format Label
+                                    </label>
+                                    <input type="text" id="manual-format-desc" value="Carton (10x20)"
+                                        placeholder="e.g., Carton (10x20), Pack of 20, 250g Bucket"
+                                        class="w-full bg-zinc-900 border border-zinc-700 focus:border-amber-500 rounded-xl px-3.5 py-3 text-white placeholder-zinc-500 text-sm outline-none transition">
+                                </div>
+                                <div>
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <label for="manual-unit-price"
+                                            class="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+                                            Unit Price (€) <span class="text-amber-500">*</span>
+                                        </label>
+                                        <span class="text-[11px] text-zinc-400">LU avg: €7.10/pack • €71/carton</span>
+                                    </div>
+                                    <div class="relative">
+                                        <span
+                                            class="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 font-mono text-sm">€</span>
+                                        <input type="number" id="manual-unit-price" step="0.10" min="0.50" value="71.00"
+                                            class="w-full bg-zinc-900 border border-zinc-700 focus:border-amber-500 rounded-xl pl-8 pr-4 py-3 text-white font-mono text-sm outline-none transition">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Format Selector (Carton vs Pack) & Quantity Stepper -->
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 pt-2 border-t border-zinc-800/70">
+
+                            <!-- Unit Type Selector (Cartouche vs Paquet) -->
+                            <div id="unit-format-col" class="sm:col-span-6">
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-2">
+                                    Order Format (Luxembourg Packaging)
+                                </label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button type="button" id="btn-format-carton"
+                                        class="py-3 px-3 rounded-xl border border-amber-500 bg-amber-500/15 text-white text-left transition flex flex-col justify-between">
+                                        <div class="flex items-center justify-between w-full">
+                                            <span class="text-xs font-bold">Carton (Cartouche)</span>
+                                            <span class="w-2 h-2 rounded-full bg-amber-400"
+                                                id="dot-format-carton"></span>
+                                        </div>
+                                        <span id="label-carton-price"
+                                            class="text-sm font-mono font-bold text-amber-400 mt-1">€77.00</span>
+                                    </button>
+
+                                    <button type="button" id="btn-format-pack"
+                                        class="py-3 px-3 rounded-xl border border-zinc-800 bg-zinc-900 hover:bg-zinc-800/70 text-zinc-300 text-left transition flex flex-col justify-between">
+                                        <div class="flex items-center justify-between w-full">
+                                            <span class="text-xs font-bold">Single Pack (Paquet)</span>
+                                            <span class="w-2 h-2 rounded-full bg-zinc-700" id="dot-format-pack"></span>
+                                        </div>
+                                        <span id="label-pack-price"
+                                            class="text-sm font-mono font-semibold text-zinc-400 mt-1">€7.70</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Quantity Stepper -->
+                            <div class="sm:col-span-3">
+                                <label for="cig-quantity"
+                                    class="block text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-2">
+                                    Quantity <span class="text-amber-500">*</span>
+                                </label>
+                                <div
+                                    class="flex items-center bg-zinc-900 border border-zinc-700 rounded-xl overflow-hidden focus-within:border-amber-500 transition h-[58px]">
+                                    <button type="button" id="qty-minus"
+                                        class="px-4 h-full text-zinc-300 hover:text-white hover:bg-zinc-800 transition font-bold text-lg select-none"
+                                        aria-label="Decrease quantity">
+                                        −
+                                    </button>
+                                    <input type="number" id="cig-quantity" min="1" max="100" value="1" required
+                                        class="w-full bg-transparent text-center text-white font-bold font-mono text-base outline-none appearance-none">
+                                    <button type="button" id="qty-plus"
+                                        class="px-4 h-full text-zinc-300 hover:text-white hover:bg-zinc-800 transition font-bold text-lg select-none"
+                                        aria-label="Increase quantity">
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Add to Multi-Item Order Basket Button -->
+                            <div class="sm:col-span-3 flex flex-col justify-end">
+                                <button type="button" id="btn-add-to-basket"
+                                    class="h-[58px] w-full px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 hover:border-amber-500/50 text-amber-400 font-semibold text-xs transition flex flex-col items-center justify-center gap-0.5">
+                                    <span class="flex items-center gap-1 text-white font-bold">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-400"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        Add to List
+                                    </span>
+                                    <span class="text-[10px] text-zinc-400">Combine multiple brands</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- EU / Luxembourg 800-Cigarette Personal Allowance Indicator -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 text-xs">
+                            <div class="flex items-center gap-2 text-zinc-400">
+                                <span id="allowance-status-dot"
+                                    class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                                <span id="allowance-text">EU cross-border guideline: <strong>200 / 800
+                                        cigarettes</strong> (4 cartons standard personal threshold).</span>
+                            </div>
+                            <span id="allowance-badge" class="text-[11px] font-mono text-emerald-400 shrink-0">Within
+                                800-cig limit</span>
+                        </div>
+                    </div>
+
+                    <!-- Multi-Item Order Basket Section (Visible when items are added to list) -->
+                    <div id="basket-section"
+                        class="hidden bg-zinc-950 border border-amber-500/30 rounded-2xl p-4 sm:p-5 space-y-3 fade-in">
+                        <div class="flex items-center justify-between border-b border-zinc-800 pb-2.5">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                                <h3 class="text-xs font-bold uppercase tracking-wider text-white">Order List (<span
+                                        id="basket-count">0</span> Items)</h3>
+                            </div>
+                            <button type="button" id="btn-clear-basket"
+                                class="text-xs text-zinc-400 hover:text-red-400 transition">Clear All</button>
+                        </div>
+
+                        <div id="basket-items-container" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+                            <!-- Populated dynamically -->
+                        </div>
+
+                        <div class="pt-2 border-t border-zinc-800 flex items-center justify-between text-sm">
+                            <span class="text-zinc-400 font-medium">Combined Order Total:</span>
+                            <span id="basket-grand-total"
+                                class="text-lg font-extrabold text-amber-400 font-mono">€0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Optional Handover / Delivery Note -->
+                    <div>
+                        <label for="delivery-notes"
+                            class="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">
+                            Delivery Location / Handover Note <span class="text-zinc-600 font-normal">(Optional)</span>
+                        </label>
+                        <input type="text" id="delivery-notes"
+                            placeholder="e.g., Kirchberg / Gare Centrale / Arlon border handover, evening preference"
+                            class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 rounded-xl px-4 py-3 text-white placeholder-zinc-600 text-sm outline-none transition">
+                    </div>
+
+                    <!-- Submit Order & Generate Revolut QR Button -->
+                    <div class="pt-1">
+                        <button type="submit"
+                            class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-zinc-950 font-extrabold text-base shadow-xl shadow-amber-500/15 hover:shadow-amber-500/25 transition flex items-center justify-center gap-2 group">
+                            <span id="submit-btn-text">Submit Order & Display Revolut QR (€77.00)</span>
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5 transform group-hover:translate-x-1 transition" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- VIEW 2: ORDER SUMMARY & REVOLUT QR CHECKOUT -->
+        <section id="payment-view" class="hidden fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+
+                <!-- Left Column: Order Summary Details -->
+                <div
+                    class="md:col-span-7 bg-zinc-900/90 border border-zinc-800 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-5">
+                            <span
+                                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                Luxembourg Order Ready
+                            </span>
+                            <span id="summary-order-id"
+                                class="text-xs font-mono text-zinc-400 bg-zinc-950 px-3 py-1 rounded-lg border border-zinc-800">
+                                #LU-84920
+                            </span>
+                        </div>
+
+                        <h2 class="text-2xl font-bold text-white mb-1">Order & Transfer Summary</h2>
+                        <p class="text-sm text-zinc-400 mb-5">Verify your Luxembourg tobacco order below and scan the
+                            Revolut QR code to complete the instant transfer.</p>
+
+                        <!-- Customer & Delivery Meta -->
+                        <div
+                            class="bg-zinc-950 border border-zinc-800/90 rounded-2xl p-4 sm:p-5 space-y-3 text-sm mb-4">
+                            <div class="flex justify-between items-center py-1 border-b border-zinc-900">
+                                <span class="text-zinc-400">Customer Name</span>
+                                <span id="summary-name" class="font-semibold text-white text-right">—</span>
+                            </div>
+                            <div class="flex justify-between items-center py-1 border-b border-zinc-900">
+                                <span class="text-zinc-400">Scheduled Delivery Date</span>
+                                <span id="summary-date" class="font-semibold text-emerald-400 text-right">—</span>
+                            </div>
+                            <div id="summary-notes-row"
+                                class="hidden flex-col gap-1 pt-1 border-b border-zinc-900 pb-2">
+                                <span class="text-zinc-400 text-xs">Delivery / Handover Note:</span>
+                                <span id="summary-notes" class="text-zinc-300 text-xs italic">—</span>
+                            </div>
+
+                            <!-- Itemized Breakdown List -->
+                            <div class="pt-1">
+                                <span
+                                    class="text-xs font-semibold uppercase tracking-wider text-zinc-400 block mb-2">Ordered
+                                    Items (2026 LU Tarif)</span>
+                                <div id="summary-items-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between items-center pt-3 border-t border-zinc-800">
+                                <span class="text-zinc-200 font-bold">Total Revolut Transfer</span>
+                                <span id="summary-total"
+                                    class="text-2xl font-extrabold text-amber-400 font-mono">€0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Payment Reference Copy Box -->
+                        <div class="bg-zinc-950/70 border border-zinc-800 rounded-2xl p-4">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs text-zinc-400 font-medium">Revolut Transfer Reference Note</span>
+                                <span class="text-[11px] text-amber-400 font-medium">Include in payment note</span>
+                            </div>
+                            <div class="flex items-center justify-between gap-2 mt-2">
+                                <code id="payment-ref-code"
+                                    class="text-xs font-mono text-white bg-zinc-900 px-3 py-2.5 rounded-xl border border-zinc-800 flex-1 overflow-x-auto whitespace-nowrap">
+                                    LU-84920
+                                </code>
+                                <button type="button" id="btn-copy-ref"
+                                    class="px-3.5 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition shrink-0 flex items-center gap-1.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-400" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                    </svg>
+                                    Copy Note
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Transmission & Order Sharing Actions -->
+                        <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <button type="button" id="btn-copy-full-manifest"
+                                class="py-2.5 px-3 rounded-xl bg-zinc-950/80 hover:bg-zinc-800 border border-zinc-800 text-xs font-semibold text-zinc-300 hover:text-white transition flex items-center justify-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-400" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                <span>Copy Full Order Details</span>
+                            </button>
+                            <a id="btn-share-whatsapp" href="#" target="_blank" rel="noopener noreferrer"
+                                class="py-2.5 px-3 rounded-xl bg-emerald-950/40 hover:bg-emerald-900/50 border border-emerald-600/30 text-xs font-semibold text-emerald-300 hover:text-emerald-200 transition flex items-center justify-center gap-1.5">
+                                <svg class="h-4 w-4 text-emerald-400 fill-current" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.067-2.003-.472-1.637-.674-2.684-2.338-2.766-2.447-.082-.109-.652-.868-.652-1.657 0-.789.412-1.178.558-1.339.146-.161.32-.201.428-.201.109 0 .218.001.312.006.104.005.244-.039.382.293.144.348.494 1.205.538 1.293.044.088.073.19.015.305-.058.115-.088.188-.175.29-.088.102-.185.228-.264.306-.088.087-.18.182-.077.359.102.176.455.751.977 1.217.672.6 1.238.786 1.414.873.176.088.279.073.382-.045.103-.118.44-.513.558-.689.117-.176.234-.147.394-.088.16.059 1.017.479 1.192.567.175.088.292.132.336.206.044.073.044.425-.1.83z" />
+                                </svg>
+                                <span>Send to Contact (WhatsApp)</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-6 pt-5 border-t border-zinc-800/80 flex flex-col sm:flex-row gap-3">
+                        <button type="button" id="btn-confirm-paid"
+                            class="flex-1 py-3.5 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/10">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            I Have Sent the Revolut Transfer
+                        </button>
+                        <button type="button" id="btn-edit-order"
+                            class="py-3.5 px-4 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium text-sm transition">
+                            Modify Order
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Column: Revolut QR Code Card -->
+                <div
+                    class="md:col-span-5 bg-gradient-to-b from-[#0b132b] via-[#0f172a] to-zinc-900 border border-blue-500/30 rounded-3xl p-6 sm:p-7 flex flex-col items-center justify-between text-center shadow-2xl relative overflow-hidden">
+
+                    <div
+                        class="absolute -top-20 -right-20 w-44 h-44 bg-blue-500/20 rounded-full blur-3xl pointer-events-none">
+                    </div>
+
+                    <!-- Revolut Branding Header -->
+                    <div class="w-full flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <div
+                                class="w-8 h-8 rounded-xl bg-white text-slate-950 font-black flex items-center justify-center text-base tracking-tighter shadow">
+                                R
+                            </div>
+                            <div class="text-left">
+                                <span class="text-sm font-bold text-white block leading-none">Revolut Pay</span>
+                                <span class="text-[11px] text-blue-300">Instant SEPA / P2P Transfer</span>
+                            </div>
+                        </div>
+                        <span id="qr-revtag-pill"
+                            class="px-2.5 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-[11px] font-mono font-semibold">
+                            revolut.me/vladimtul
+                        </span>
+                    </div>
+
+                    <!-- QR Code Canvas/SVG Box -->
+                    <div class="my-2 bg-white p-4 rounded-3xl shadow-2xl border-4 border-blue-400/20 relative">
+                        <div id="revolut-qr-container" class="w-52 h-52 flex items-center justify-center">
+                            <!-- Dynamically generated SVG QR matrix -->
+                        </div>
+
+                        <!-- Center Revolut Badge -->
+                        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div
+                                class="w-11 h-11 rounded-2xl bg-slate-950 text-white font-black text-lg flex items-center justify-center border-4 border-white shadow-md">
+                                R
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Amount & Direct Link Actions -->
+                    <div class="w-full mt-4 space-y-2.5">
+                        <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3">
+                            <span class="text-[11px] uppercase tracking-wider text-slate-400 block">Scan with Revolut
+                                App or Camera</span>
+                            <p id="qr-amount-badge" class="text-xl font-extrabold text-white font-mono mt-0.5">Send
+                                €77.00</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" id="btn-copy-revolut-link"
+                                class="py-2.5 px-3 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-200 text-xs font-semibold transition flex items-center justify-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                                <span>Copy Link</span>
+                            </button>
+
+                            <a id="btn-open-revolut-direct" href="https://revolut.me/vladimtul" target="_blank"
+                                rel="noopener noreferrer"
+                                class="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition flex items-center justify-center gap-1.5">
+                                <span>Open Revolut</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-slate-400 mt-4 leading-relaxed">
+                        Scan this QR code with your phone camera or inside the Revolut app to transfer the exact EUR
+                        total with zero fees.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Transfer Confirmation Banner -->
+            <div id="payment-confirmed-box"
+                class="hidden mt-6 bg-emerald-950/60 border border-emerald-500/40 rounded-3xl p-6 text-center fade-in">
+                <div
+                    class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-white">Revolut Transfer Notification Logged</h3>
+                <p class="text-sm text-zinc-300 max-w-md mx-auto mt-1">
+                    Thank you! Your Luxembourg tobacco order has been registered and scheduled for your requested
+                    delivery date.
+                </p>
+                <button type="button" id="btn-new-order"
+                    class="mt-4 px-5 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-amber-400 text-xs font-semibold transition">
+                    + Create Another Order
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Health & Legal Footer -->
+    <footer class="border-t border-zinc-900 bg-zinc-950 py-6 px-4 mt-12">
+        <div
+            class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div class="border border-zinc-800 bg-zinc-900/60 rounded-xl px-4 py-2.5 text-xs text-zinc-400 font-medium">
+                <strong class="text-zinc-200 uppercase tracking-wide">Avertissement Santé / Health Warning:</strong>
+                Fumer nuit gravement à votre santé et à celle de votre entourage.
+            </div>
+            <p class="text-xs text-zinc-500">
+                &copy; 2026 LuxTabac Reserve • Official Luxembourg Tax-Stamp Pricing (18+)
+            </p>
+        </div>
+    </footer>
+
+    <!-- Application Logic -->
+    <script>
+            (function () {
+                // =========================================================================
+                // 1. OFFICIAL 2026 LUXEMBOURG TOBACCO PRICE CATALOG (Banderole Prices)
+                // =========================================================================
+                const LU_2026_CATALOG = [
+                    {
+                        category: "Marlboro",
+                        items: [
+                            { id: "marlboro-red-20", brand: "Marlboro", model: "Red (10x20)", packPrice: 7.70, cartonPrice: 77.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "marlboro-gold-20", brand: "Marlboro", model: "Gold (10x20)", packPrice: 7.70, cartonPrice: 77.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "marlboro-100s-20", brand: "Marlboro", model: "Red / Gold 100s (10x20)", packPrice: 7.80, cartonPrice: 78.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "marlboro-crafted-red", brand: "Marlboro", model: "Crafted Red (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "marlboro-crafted-gold", brand: "Marlboro", model: "Crafted Gold (10x20)", packPrice: 6.20, cartonPrice: 62.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "marlboro-xxl-25", brand: "Marlboro", model: "Red / Gold XXL (8x25)", packPrice: 9.60, cartonPrice: 76.80, packsPerCarton: 8, cigsPerPack: 25 },
+                            { id: "marlboro-maxi-30", brand: "Marlboro", model: "Red / Gold Maxi (8x30)", packPrice: 11.20, cartonPrice: 89.60, packsPerCarton: 8, cigsPerPack: 30 }
+                        ]
+                    },
+                    {
+                        category: "Camel",
+                        items: [
+                            { id: "camel-yellow-20", brand: "Camel", model: "Filters / Yellow (10x20)", packPrice: 7.10, cartonPrice: 71.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "camel-blue-20", brand: "Camel", model: "Blue (10x20)", packPrice: 7.10, cartonPrice: 71.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "camel-activate-20", brand: "Camel", model: "Activate / White (10x20)", packPrice: 7.10, cartonPrice: 71.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "camel-natural-20", brand: "Camel", model: "Natural Red / Blue (10x20)", packPrice: 7.10, cartonPrice: 71.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "camel-100s-20", brand: "Camel", model: "Filters 100s (10x20)", packPrice: 7.40, cartonPrice: 74.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "camel-big-50", brand: "Camel", model: "Blue / Yellow Big (4x50)", packPrice: 16.00, cartonPrice: 64.00, packsPerCarton: 4, cigsPerPack: 50 }
+                        ]
+                    },
+                    {
+                        category: "Lucky Strike",
+                        items: [
+                            { id: "lucky-red-20", brand: "Lucky Strike", model: "Red (10x20)", packPrice: 6.80, cartonPrice: 68.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "lucky-blue-20", brand: "Lucky Strike", model: "Blue (10x20)", packPrice: 6.90, cartonPrice: 69.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "lucky-auth-20", brand: "Lucky Strike", model: "Authentic Red / Blue (10x20)", packPrice: 7.10, cartonPrice: 71.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "lucky-ice-20", brand: "Lucky Strike", model: "Ice / Green (10x20)", packPrice: 6.90, cartonPrice: 69.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "lucky-red-25", brand: "Lucky Strike", model: "Red (8x25)", packPrice: 8.50, cartonPrice: 68.00, packsPerCarton: 8, cigsPerPack: 25 }
+                        ]
+                    },
+                    {
+                        category: "Winston",
+                        items: [
+                            { id: "winston-red-20", brand: "Winston", model: "Classic Red (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "winston-blue-20", brand: "Winston", model: "Blue / S-Line (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "winston-expand-20", brand: "Winston", model: "Expand (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "winston-25", brand: "Winston", model: "Classic / Blue (8x25)", packPrice: 8.10, cartonPrice: 64.80, packsPerCarton: 8, cigsPerPack: 25 },
+                            { id: "winston-30", brand: "Winston", model: "Classic / Blue (8x30)", packPrice: 9.80, cartonPrice: 78.40, packsPerCarton: 8, cigsPerPack: 30 }
+                        ]
+                    },
+                    {
+                        category: "Gauloises & Gitanes",
+                        items: [
+                            { id: "gauloises-blue-20", brand: "Gauloises", model: "Blondes Blue (10x20)", packPrice: 7.00, cartonPrice: 70.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "gauloises-red-20", brand: "Gauloises", model: "Blondes Red (10x20)", packPrice: 6.70, cartonPrice: 67.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "gauloises-free-20", brand: "Gauloises", model: "Additive Free Red (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "gauloises-brunes-20", brand: "Gauloises", model: "Brunes Filtre (10x20)", packPrice: 8.50, cartonPrice: 85.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "gitanes-filtre-20", brand: "Gitanes", model: "Filtre (10x20)", packPrice: 8.50, cartonPrice: 85.00, packsPerCarton: 10, cigsPerPack: 20 }
+                        ]
+                    },
+                    {
+                        category: "L&M, Chesterfield & Pall Mall",
+                        items: [
+                            { id: "lm-20", brand: "L&M", model: "Red / Blue Label (10x20)", packPrice: 6.70, cartonPrice: 67.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "lm-25", brand: "L&M", model: "Red / Blue Label (8x25)", packPrice: 8.30, cartonPrice: 66.40, packsPerCarton: 8, cigsPerPack: 25 },
+                            { id: "chesterfield-20", brand: "Chesterfield", model: "Orange / Original (10x20)", packPrice: 6.70, cartonPrice: 67.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "chesterfield-25", brand: "Chesterfield", model: "Blue (8x25)", packPrice: 7.90, cartonPrice: 63.20, packsPerCarton: 8, cigsPerPack: 25 },
+                            { id: "pallmall-20", brand: "Pall Mall", model: "Red (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "pallmall-25", brand: "Pall Mall", model: "Red / Additive Free (8x25)", packPrice: 7.60, cartonPrice: 60.80, packsPerCarton: 8, cigsPerPack: 25 }
+                        ]
+                    },
+                    {
+                        category: "Local Luxembourg & International Brands",
+                        items: [
+                            { id: "ducal-30", brand: "Ducal", model: "Red / Blue / Gold (8x30)", packPrice: 8.30, cartonPrice: 66.40, packsPerCarton: 8, cigsPerPack: 30 },
+                            { id: "ducal-25", brand: "Ducal", model: "Red (8x25)", packPrice: 7.10, cartonPrice: 56.80, packsPerCarton: 8, cigsPerPack: 25 },
+                            { id: "elixyr-20", brand: "Elixyr", model: "Red / Duo / Plus (10x20)", packPrice: 6.10, cartonPrice: 61.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "austin-20", brand: "Austin", model: "Red (10x20)", packPrice: 5.70, cartonPrice: 57.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "che-20", brand: "Che", model: "Red / Blanco (10x20)", packPrice: 6.30, cartonPrice: 63.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "news-20", brand: "News", model: "Red / Fresh (10x20)", packPrice: 6.20, cartonPrice: 62.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "west-20", brand: "West", model: "Red (10x20)", packPrice: 6.00, cartonPrice: 60.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "bh-gold-20", brand: "Benson & Hedges", model: "Gold (10x20)", packPrice: 7.80, cartonPrice: 78.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "davidoff-20", brand: "Davidoff", model: "Classic / Gold (10x20)", packPrice: 7.90, cartonPrice: 79.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "dunhill-20", brand: "Dunhill", model: "International Red (10x20)", packPrice: 8.80, cartonPrice: 88.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "mademoiselle-20", brand: "Mademoiselle", model: "Blanche / Bleue / Rose (10x20)", packPrice: 5.90, cartonPrice: 59.00, packsPerCarton: 10, cigsPerPack: 20 }
+                        ]
+                    },
+                    {
+                        category: "Rolling & Tubing Tobacco (Pots / Buckets)",
+                        items: [
+                            { id: "tob-marlboro-150g", brand: "Marlboro", model: "Fine Cut Red / Gold (150g Pot)", packPrice: 24.00, cartonPrice: 24.00, packsPerCarton: 1, cigsPerPack: 200, isPot: true },
+                            { id: "tob-marlboro-500g", brand: "Marlboro", model: "Volume Tobacco (500g Mega Box)", packPrice: 78.00, cartonPrice: 78.00, packsPerCarton: 1, cigsPerPack: 650, isPot: true },
+                            { id: "tob-camel-300g", brand: "Camel", model: "Hand Rolling Yellow (10x30g Carton)", packPrice: 5.80, cartonPrice: 58.00, packsPerCarton: 10, cigsPerPack: 40 },
+                            { id: "tob-lucky-175g", brand: "Lucky Strike", model: "Volume Tobacco (175g Pot)", packPrice: 27.00, cartonPrice: 27.00, packsPerCarton: 1, cigsPerPack: 230, isPot: true },
+                            { id: "tob-winston-175g", brand: "Winston", model: "Expert Red / Blue (175g Pot)", packPrice: 29.20, cartonPrice: 29.20, packsPerCarton: 1, cigsPerPack: 230, isPot: true },
+                            { id: "tob-ducal-200g", brand: "Ducal", model: "Original Red / Blue / Gold (200g)", packPrice: 29.00, cartonPrice: 29.00, packsPerCarton: 1, cigsPerPack: 260, isPot: true }
+                        ]
+                    }
+                ];
+
+                // Flat map for O(1) lookup by ID
+                const CATALOG_MAP = {};
+                LU_2026_CATALOG.forEach(group => {
+                    group.items.forEach(item => {
+                        CATALOG_MAP[item.id] = item;
+                    });
+                });
+
+                // =========================================================================
+                // 2. APPLICATION STATE
+                // =========================================================================
+                let isManualMode = false;
+                let selectedUnitFormat = 'carton'; // 'carton' or 'pack'
+                let merchantRevtag = 'vladimtul';
+                let orderBasket = []; // Array of multi-item objects
+
+                // =========================================================================
+                // 3. DOM ELEMENTS
+                // =========================================================================
+                const ageModal = document.getElementById('age-modal');
+                const btnAgeConfirm = document.getElementById('btn-age-confirm');
+                const btnAgeDecline = document.getElementById('btn-age-decline');
+                const ageDeniedMsg = document.getElementById('age-denied-msg');
+
+                // Price Explorer Modal
+                const priceExplorerModal = document.getElementById('price-explorer-modal');
+                const btnOpenExplorer = document.getElementById('btn-open-explorer');
+                const btnCloseExplorer = document.getElementById('btn-close-explorer');
+                const explorerSearch = document.getElementById('explorer-search');
+                const explorerListContainer = document.getElementById('explorer-list-container');
+                const btnExplorerManual = document.getElementById('btn-explorer-manual');
+
+                // Revtag Config Popover
+                const btnToggleRevtag = document.getElementById('btn-toggle-revtag');
+                const revtagPopover = document.getElementById('revtag-popover');
+                const inputMerchantRevtag = document.getElementById('input-merchant-revtag');
+                const btnSaveRevtag = document.getElementById('btn-save-revtag');
+                const headerRevtagLabel = document.getElementById('header-revtag-label');
+
+                // Views & Stepper
+                const orderView = document.getElementById('order-view');
+                const paymentView = document.getElementById('payment-view');
+                const step1Badge = document.getElementById('step-1-badge');
+                const step2Badge = document.getElementById('step-2-badge');
+
+                // Form Elements
+                const orderForm = document.getElementById('cigarette-order-form');
+                const customerNameInput = document.getElementById('customer-name');
+                const deliveryDateInput = document.getElementById('delivery-date');
+                const deliveryNotesInput = document.getElementById('delivery-notes');
+
+                const modeIndicatorPill = document.getElementById('mode-indicator-pill');
+                const btnModeCatalog = document.getElementById('btn-mode-catalog');
+                const btnModeManual = document.getElementById('btn-mode-manual');
+                const btnBackToCatalog = document.getElementById('btn-back-to-catalog');
+
+                const catalogSelectWrapper = document.getElementById('catalog-select-wrapper');
+                const luCatalogSelect = document.getElementById('lu-catalog-select');
+                const infoSelectedName = document.getElementById('info-selected-name');
+                const infoPackBadge = document.getElementById('info-pack-badge');
+                const infoCartonBadge = document.getElementById('info-carton-badge');
+
+                const manualInputWrapper = document.getElementById('manual-input-wrapper');
+                const manualBrandInput = document.getElementById('manual-brand');
+                const manualModelInput = document.getElementById('manual-model');
+                const manualFormatDescInput = document.getElementById('manual-format-desc');
+                const manualUnitPriceInput = document.getElementById('manual-unit-price');
+
+                const unitFormatCol = document.getElementById('unit-format-col');
+                const btnFormatCarton = document.getElementById('btn-format-carton');
+                const btnFormatPack = document.getElementById('btn-format-pack');
+                const dotFormatCarton = document.getElementById('dot-format-carton');
+                const dotFormatPack = document.getElementById('dot-format-pack');
+                const labelCartonPrice = document.getElementById('label-carton-price');
+                const labelPackPrice = document.getElementById('label-pack-price');
+
+                const quantityInput = document.getElementById('cig-quantity');
+                const qtyMinusBtn = document.getElementById('qty-minus');
+                const qtyPlusBtn = document.getElementById('qty-plus');
+                const btnAddToBasket = document.getElementById('btn-add-to-basket');
+
+                const liveTotalLabel = document.getElementById('live-total-label');
+                const liveTotalEl = document.getElementById('live-total');
+                const liveUnitSubtext = document.getElementById('live-unit-subtext');
+                const allowanceStatusDot = document.getElementById('allowance-status-dot');
+                const allowanceText = document.getElementById('allowance-text');
+                const allowanceBadge = document.getElementById('allowance-badge');
+
+                // Basket Section
+                const basketSection = document.getElementById('basket-section');
+                const basketCount = document.getElementById('basket-count');
+                const basketItemsContainer = document.getElementById('basket-items-container');
+                const basketGrandTotal = document.getElementById('basket-grand-total');
+                const btnClearBasket = document.getElementById('btn-clear-basket');
+                const submitBtnText = document.getElementById('submit-btn-text');
+
+                const formErrorBox = document.getElementById('form-error');
+                const formErrorText = document.getElementById('form-error-text');
+
+                // Summary & Payment View Elements
+                const summaryOrderId = document.getElementById('summary-order-id');
+                const summaryName = document.getElementById('summary-name');
+                const summaryDate = document.getElementById('summary-date');
+                const summaryNotesRow = document.getElementById('summary-notes-row');
+                const summaryNotes = document.getElementById('summary-notes');
+                const summaryItemsList = document.getElementById('summary-items-list');
+                const summaryTotal = document.getElementById('summary-total');
+                const paymentRefCode = document.getElementById('payment-ref-code');
+
+                const qrRevtagPill = document.getElementById('qr-revtag-pill');
+                const qrContainer = document.getElementById('revolut-qr-container');
+                const qrAmountBadge = document.getElementById('qr-amount-badge');
+                const btnCopyRef = document.getElementById('btn-copy-ref');
+                const btnCopyRevolutLink = document.getElementById('btn-copy-revolut-link');
+                const btnOpenRevolutDirect = document.getElementById('btn-open-revolut-direct');
+                const btnConfirmPaid = document.getElementById('btn-confirm-paid');
+                const btnEditOrder = document.getElementById('btn-edit-order');
+                const btnNewOrder = document.getElementById('btn-new-order');
+                const paymentConfirmedBox = document.getElementById('payment-confirmed-box');
+                const btnCopyFullManifest = document.getElementById('btn-copy-full-manifest');
+                const btnShareWhatsapp = document.getElementById('btn-share-whatsapp');
+                const ageButtonsRow = document.getElementById('age-buttons-row');
+
+                const toastBanner = document.getElementById('toast-banner');
+                const toastText = document.getElementById('toast-text');
+
+                let currentOrderManifest = '';
+
+                // =========================================================================
+                // SECURITY HELPER: HTML ESCAPING
+                // =========================================================================
+                function escapeHTML(str) {
+                    if (str === null || str === undefined) return '';
+                    return String(str).replace(/[&<>'"]/g, tag => ({
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        "'": '&#39;',
+                        '"': '&quot;'
+                    }[tag] || tag));
+                }
+
+                // =========================================================================
+                // 4. POPULATE DROPDOWN & PRICE EXPLORER
+                // =========================================================================
+                function populateCatalogDropdown() {
+                    luCatalogSelect.innerHTML = '';
+
+                    LU_2026_CATALOG.forEach(group => {
+                        const optgroup = document.createElement('optgroup');
+                        optgroup.label = `── ${group.category} ──`;
+
+                        group.items.forEach(item => {
+                            const option = document.createElement('option');
+                            option.value = item.id;
+                            if (item.isPot) {
+                                option.textContent = `${item.brand} ${item.model} — Unit: €${item.cartonPrice.toFixed(2)}`;
+                            } else {
+                                option.textContent = `${item.brand} ${item.model} — Pack: €${item.packPrice.toFixed(2)} | Carton: €${item.cartonPrice.toFixed(2)}`;
+                            }
+                            optgroup.appendChild(option);
+                        });
+
+                        luCatalogSelect.appendChild(optgroup);
+                    });
+
+                    // Add Manual Entry Option at the bottom of the dropdown
+                    const manualGroup = document.createElement('optgroup');
+                    manualGroup.label = '── Unlisted / Custom Brand ──';
+                    const manualOption = document.createElement('option');
+                    manualOption.value = '__MANUAL__';
+                    manualOption.textContent = '+ Missing from list? Quick Manual Input...';
+                    manualGroup.appendChild(manualOption);
+                    luCatalogSelect.appendChild(manualGroup);
+                }
+
+                function renderPriceExplorer(filterText = '') {
+                    const query = filterText.trim().toLowerCase();
+                    explorerListContainer.innerHTML = '';
+                    let totalMatches = 0;
+
+                    LU_2026_CATALOG.forEach(group => {
+                        const filtered = group.items.filter(item => {
+                            if (!query) return true;
+                            const haystack = `${group.category} ${item.brand} ${item.model} ${item.packPrice} ${item.cartonPrice}`.toLowerCase();
+                            return haystack.includes(query);
+                        });
+
+                        if (filtered.length === 0) return;
+                        totalMatches += filtered.length;
+
+                        const section = document.createElement('div');
+                        section.innerHTML = `
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2.5 flex items-center justify-between">
+                            <span>${escapeHTML(group.category)}</span>
+                            <span class="text-[11px] text-zinc-500 font-normal">${filtered.length} options</span>
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            ${filtered.map(item => `
+                                <button 
+                                    type="button" 
+                                    data-select-id="${item.id}" 
+                                    class="explorer-item-btn text-left p-3 rounded-xl bg-zinc-950 hover:bg-zinc-800/90 border border-zinc-800 hover:border-amber-500/50 transition flex items-center justify-between gap-2 group"
+                                >
+                                    <div>
+                                        <div class="text-xs font-bold text-white group-hover:text-amber-400 transition">${escapeHTML(item.brand)}</div>
+                                        <div class="text-[11px] text-zinc-400">${escapeHTML(item.model)}</div>
+                                    </div>
+                                    <div class="text-right font-mono shrink-0">
+                                        ${item.isPot
+                                ? `<span class="text-xs font-bold text-emerald-400 block">€${item.cartonPrice.toFixed(2)}</span><span class="text-[10px] text-zinc-500">Pot / Box</span>`
+                                : `<span class="text-xs font-bold text-emerald-400 block">€${item.cartonPrice.toFixed(2)} <span class="text-[10px] text-zinc-500 font-sans">Carton</span></span>
+                                               <span class="text-[11px] text-amber-400 block">€${item.packPrice.toFixed(2)} <span class="text-[10px] text-zinc-500 font-sans">Pack</span></span>`
+                            }
+                                    </div>
+                                </button>
+                            `).join('')}
+                        </div>
+                    `;
+                        explorerListContainer.appendChild(section);
+                    });
+
+                    if (totalMatches === 0) {
+                        const safeFilter = escapeHTML(filterText);
+                        explorerListContainer.innerHTML = `
+                        <div class="text-center py-8">
+                            <p class="text-sm text-zinc-400 mb-3">No cigarette brand matching "<strong>${safeFilter}</strong>" in the 2026 Luxembourg list.</p>
+                            <button type="button" id="btn-empty-manual" class="px-4 py-2.5 rounded-xl bg-amber-500 text-zinc-950 font-bold text-xs shadow-md">
+                                + Enter via Manual Input
+                            </button>
+                        </div>
+                    `;
+                        const btnEmptyManual = document.getElementById('btn-empty-manual');
+                        if (btnEmptyManual) {
+                            btnEmptyManual.addEventListener('click', () => {
+                                priceExplorerModal.classList.add('hidden');
+                                setManualMode(true);
+                                manualBrandInput.value = filterText;
+                                manualBrandInput.focus();
+                            });
+                        }
+                    }
+
+                    // Bind click handlers to select item
+                    explorerListContainer.querySelectorAll('.explorer-item-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = btn.getAttribute('data-select-id');
+                            setManualMode(false);
+                            luCatalogSelect.value = id;
+                            updateCalculationAndUI();
+                            priceExplorerModal.classList.add('hidden');
+                            showToast(`Selected ${CATALOG_MAP[id].brand} ${CATALOG_MAP[id].model}`);
+                        });
+                    });
+                }
+
+                // =========================================================================
+                // 5. MODE SWITCHING & FORMAT SELECTION
+                // =========================================================================
+                function setManualMode(enableManual) {
+                    isManualMode = enableManual;
+
+                    if (isManualMode) {
+                        catalogSelectWrapper.classList.add('hidden');
+                        manualInputWrapper.classList.remove('hidden');
+                        unitFormatCol.classList.add('opacity-50', 'pointer-events-none');
+
+                        btnModeManual.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 text-zinc-950 transition flex items-center gap-1';
+                        btnModeCatalog.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white transition';
+                        modeIndicatorPill.textContent = 'Custom Manual Entry';
+                        modeIndicatorPill.className = 'px-2 py-0.5 rounded-md bg-blue-500/15 text-blue-300 text-[10px] border border-blue-500/30';
+                    } else {
+                        if (luCatalogSelect.value === '__MANUAL__') {
+                            luCatalogSelect.value = 'marlboro-red-20';
+                        }
+                        catalogSelectWrapper.classList.remove('hidden');
+                        manualInputWrapper.classList.add('hidden');
+                        unitFormatCol.classList.remove('opacity-50', 'pointer-events-none');
+
+                        btnModeCatalog.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 text-zinc-950 transition';
+                        btnModeManual.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white transition flex items-center gap-1';
+                        modeIndicatorPill.textContent = 'LU 2026 Catalog';
+                        modeIndicatorPill.className = 'px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-400 text-[10px] border border-amber-500/30';
+                    }
+
+                    updateCalculationAndUI();
+                }
+
+                function setUnitFormat(format) {
+                    selectedUnitFormat = format;
+                    if (format === 'carton') {
+                        btnFormatCarton.className = 'py-3 px-3 rounded-xl border border-amber-500 bg-amber-500/15 text-white text-left transition flex flex-col justify-between';
+                        dotFormatCarton.className = 'w-2 h-2 rounded-full bg-amber-400';
+                        labelCartonPrice.className = 'text-sm font-mono font-bold text-amber-400 mt-1';
+
+                        btnFormatPack.className = 'py-3 px-3 rounded-xl border border-zinc-800 bg-zinc-900 hover:bg-zinc-800/70 text-zinc-300 text-left transition flex flex-col justify-between';
+                        dotFormatPack.className = 'w-2 h-2 rounded-full bg-zinc-700';
+                        labelPackPrice.className = 'text-sm font-mono font-semibold text-zinc-400 mt-1';
+                    } else {
+                        btnFormatPack.className = 'py-3 px-3 rounded-xl border border-amber-500 bg-amber-500/15 text-white text-left transition flex flex-col justify-between';
+                        dotFormatPack.className = 'w-2 h-2 rounded-full bg-amber-400';
+                        labelPackPrice.className = 'text-sm font-mono font-bold text-amber-400 mt-1';
+
+                        btnFormatCarton.className = 'py-3 px-3 rounded-xl border border-zinc-800 bg-zinc-900 hover:bg-zinc-800/70 text-zinc-300 text-left transition flex flex-col justify-between';
+                        dotFormatCarton.className = 'w-2 h-2 rounded-full bg-zinc-700';
+                        labelCartonPrice.className = 'text-sm font-mono font-semibold text-zinc-400 mt-1';
+                    }
+                    updateCalculationAndUI();
+                }
+
+                // =========================================================================
+                // 6. REAL-TIME PRICE & CIGARETTE ALLOWANCE CALCULATION
+                // =========================================================================
+                function getCurrentConfiguredItem() {
+                    const qty = Math.min(100, Math.max(1, parseInt(quantityInput.value, 10) || 1));
+
+                    if (isManualMode) {
+                        const brand = manualBrandInput.value.trim().slice(0, 80) || 'Custom Brand';
+                        const model = manualModelInput.value.trim().slice(0, 80) || 'Standard';
+                        const formatDesc = manualFormatDescInput.value.trim().slice(0, 80) || 'Carton (10x20)';
+                        const unitPrice = Math.min(9999, Math.max(0, parseFloat(manualUnitPriceInput.value) || 0));
+                        const isPackLikely = formatDesc.toLowerCase().includes('pack') || formatDesc.toLowerCase().includes('paquet') || unitPrice < 20;
+                        const estimatedCigsPerUnit = isPackLikely ? 20 : 200;
+
+                        return {
+                            brand,
+                            model,
+                            formatLabel: formatDesc,
+                            qty,
+                            unitPrice,
+                            subtotal: qty * unitPrice,
+                            totalCigs: qty * estimatedCigsPerUnit,
+                            isManual: true
+                        };
+                    }
+
+                    const selectedId = luCatalogSelect.value;
+                    const item = CATALOG_MAP[selectedId] || LU_2026_CATALOG[0].items[0];
+
+                    if (item.isPot) {
+                        const unitPrice = item.cartonPrice;
+                        return {
+                            brand: item.brand,
+                            model: item.model,
+                            formatLabel: 'Pot / Box',
+                            qty,
+                            unitPrice,
+                            subtotal: qty * unitPrice,
+                            totalCigs: qty * item.cigsPerPack,
+                            isManual: false
+                        };
+                    }
+
+                    const isCarton = selectedUnitFormat === 'carton';
+                    const unitPrice = isCarton ? item.cartonPrice : item.packPrice;
+                    const cigsPerUnit = isCarton ? (item.packsPerCarton * item.cigsPerPack) : item.cigsPerPack;
+                    const formatLabel = isCarton
+                        ? (qty === 1 ? `Carton (${item.packsPerCarton}x${item.cigsPerPack})` : `Cartons (${item.packsPerCarton}x${item.cigsPerPack})`)
+                        : (qty === 1 ? `Pack (${item.cigsPerPack} cigs)` : `Packs (${item.cigsPerPack} cigs)`);
+
+                    return {
+                        brand: item.brand,
+                        model: item.model,
+                        formatLabel,
+                        qty,
+                        unitPrice,
+                        subtotal: qty * unitPrice,
+                        totalCigs: qty * cigsPerUnit,
+                        isManual: false
+                    };
+                }
+
+                function updateCalculationAndUI() {
+                    if (!isManualMode) {
+                        const selectedId = luCatalogSelect.value;
+                        if (selectedId === '__MANUAL__') {
+                            setManualMode(true);
+                            return;
+                        }
+                        const item = CATALOG_MAP[selectedId];
+                        if (item) {
+                            infoSelectedName.textContent = `${item.brand} ${item.model}`;
+                            infoPackBadge.innerHTML = item.isPot
+                                ? `Format: <strong class="text-amber-400">Pot / Box</strong>`
+                                : `Pack: <strong class="text-amber-400">€${item.packPrice.toFixed(2)}</strong>`;
+                            infoCartonBadge.innerHTML = item.isPot
+                                ? `Unit: <strong class="text-emerald-400">€${item.cartonPrice.toFixed(2)}</strong>`
+                                : `Carton (${item.packsPerCarton}x${item.cigsPerPack}): <strong class="text-emerald-400">€${item.cartonPrice.toFixed(2)}</strong>`;
+
+                            labelCartonPrice.textContent = `€${item.cartonPrice.toFixed(2)}`;
+                            labelPackPrice.textContent = `€${item.packPrice.toFixed(2)}`;
+                        }
+                    }
+
+                    const currentItem = getCurrentConfiguredItem();
+                    const basketTotal = orderBasket.reduce((acc, it) => acc + it.subtotal, 0);
+                    const basketCigs = orderBasket.reduce((acc, it) => acc + it.totalCigs, 0);
+
+                    const effectiveTotal = orderBasket.length > 0 ? basketTotal : currentItem.subtotal;
+                    const effectiveCigs = orderBasket.length > 0 ? basketCigs : currentItem.totalCigs;
+
+                    if (orderBasket.length > 0) {
+                        liveTotalLabel.textContent = `Order List Total (${orderBasket.length} items)`;
+                        liveTotalEl.textContent = `€${basketTotal.toFixed(2)}`;
+                        liveUnitSubtext.textContent = `Current selector: €${currentItem.subtotal.toFixed(2)}`;
+                    } else {
+                        liveTotalLabel.textContent = 'Current Item Total';
+                        liveTotalEl.textContent = `€${currentItem.subtotal.toFixed(2)}`;
+                        liveUnitSubtext.textContent = `${currentItem.qty} × ${currentItem.formatLabel} (~${currentItem.totalCigs} cigs)`;
+                    }
+
+                    submitBtnText.textContent = `Submit Order & Display Revolut QR (€${effectiveTotal.toFixed(2)})`;
+
+                    // Update EU 800-cigarette personal transport indicator
+                    if (effectiveCigs <= 800) {
+                        allowanceStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+                        allowanceText.innerHTML = `EU cross-border guideline: <strong>${effectiveCigs} / 800 cigarettes</strong> (4 cartons standard personal threshold).`;
+                        allowanceBadge.textContent = 'Within 800-cig limit';
+                        allowanceBadge.className = 'text-[11px] font-mono text-emerald-400 shrink-0';
+                    } else {
+                        allowanceStatusDot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0';
+                        allowanceText.innerHTML = `Total volume: <strong>${effectiveCigs} cigarettes</strong> (Exceeds standard 800-cig EU cross-border personal guideline).`;
+                        allowanceBadge.textContent = 'Above 800-cig EU threshold';
+                        allowanceBadge.className = 'text-[11px] font-mono text-amber-400 shrink-0';
+                    }
+                }
+
+                // =========================================================================
+                // 7. MULTI-ITEM ORDER BASKET MANAGEMENT
+                // =========================================================================
+                function renderBasket() {
+                    if (orderBasket.length === 0) {
+                        basketSection.classList.add('hidden');
+                        updateCalculationAndUI();
+                        return;
+                    }
+
+                    basketSection.classList.remove('hidden');
+                    basketCount.textContent = orderBasket.length;
+
+                    const grandTotal = orderBasket.reduce((sum, item) => sum + item.subtotal, 0);
+                    basketGrandTotal.textContent = `€${grandTotal.toFixed(2)}`;
+
+                    basketItemsContainer.innerHTML = orderBasket.map((item, idx) => `
+                    <div class="flex items-center justify-between gap-2 bg-zinc-900 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs">
+                        <div>
+                            <span class="font-bold text-white">${item.qty}× ${escapeHTML(item.brand)} ${escapeHTML(item.model)}</span>
+                            <span class="text-zinc-400 block text-[11px]">${escapeHTML(item.formatLabel)} • €${item.unitPrice.toFixed(2)}/unit</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="font-mono font-bold text-amber-400">€${item.subtotal.toFixed(2)}</span>
+                            <button type="button" data-remove-idx="${idx}" class="remove-basket-btn text-zinc-500 hover:text-red-400 p-1 transition" title="Remove item">
+                                ✕
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                    basketItemsContainer.querySelectorAll('.remove-basket-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const idx = parseInt(btn.getAttribute('data-remove-idx'), 10);
+                            orderBasket.splice(idx, 1);
+                            renderBasket();
+                        });
+                    });
+
+                    updateCalculationAndUI();
+                }
+
+                // =========================================================================
+                // 8. ISO/IEC 18004 STANDARD REVOLUT QR CODE SVG GENERATOR
+                // =========================================================================
+                function generateRevolutQRSvg(targetUrl) {
+                    try {
+                        if (typeof qrcode === 'function') {
+                            // Error Correction Level 'Q' (25% redundancy) enables 100% reliable camera decoding
+                            // even with the central Revolut 'R' icon overlaid!
+                            const qr = qrcode(0, 'Q');
+                            qr.addData(targetUrl);
+                            qr.make();
+                            // scalable: true creates responsive SVG with viewBox
+                            return qr.createSvgTag({ scalable: true, margin: 1 });
+                        }
+                    } catch (err) {
+                        console.error('QR code generation error:', err);
+                    }
+                    // Fallback SVG if external script is unavailable
+                    return `
+                    <div class="w-full h-full flex flex-col items-center justify-center p-4 text-center">
+                        <span class="text-xs text-amber-400 font-bold mb-1">Direct Transfer Ready</span>
+                        <span class="text-[11px] text-zinc-400">Use "Open Revolut" or "Copy Link" below.</span>
+                    </div>
+                `;
+                }
+
+                // =========================================================================
+                // 9. UTILITIES (Date, Toast, Clipboard, Order Manifest)
+                // =========================================================================
+                function setDefaultDeliveryDate() {
+                    const today = new Date();
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(today.getDate() + 1);
+
+                    const yyyy = today.getFullYear();
+                    const mm = String(today.getMonth() + 1).padStart(2, '0');
+                    const dd = String(today.getDate()).padStart(2, '0');
+                    deliveryDateInput.min = `${yyyy}-${mm}-${dd}`;
+
+                    const tY = tomorrow.getFullYear();
+                    const tM = String(tomorrow.getMonth() + 1).padStart(2, '0');
+                    const tD = String(tomorrow.getDate()).padStart(2, '0');
+                    deliveryDateInput.value = `${tY}-${tM}-${tD}`;
+                }
+
+                function formatDisplayDate(dateStr) {
+                    if (!dateStr) return '—';
+                    const parts = dateStr.split('-');
+                    if (parts.length !== 3) return dateStr;
+                    const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+                    return dateObj.toLocaleDateString('en-GB', {
+                        weekday: 'short',
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                }
+
+                let toastTimeout;
+                function showToast(message) {
+                    toastText.textContent = message;
+                    toastBanner.classList.remove('hidden');
+                    clearTimeout(toastTimeout);
+                    toastTimeout = setTimeout(() => {
+                        toastBanner.classList.add('hidden');
+                    }, 2800);
+                }
+
+                function copyTextToClipboard(text, message) {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        navigator.clipboard.writeText(text).then(() => {
+                            showToast(message || 'Copied to clipboard!');
+                        }).catch(() => {
+                            fallbackCopyText(text, message);
+                        });
+                    } else {
+                        fallbackCopyText(text, message);
+                    }
+                }
+
+                function fallbackCopyText(text, message) {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    textarea.style.position = 'fixed';
+                    textarea.style.left = '-9999px';
+                    textarea.style.top = '0';
+                    textarea.setAttribute('readonly', '');
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        showToast(message || 'Copied to clipboard!');
+                    } catch (err) {
+                        showToast('Copy failed. Please copy manually.');
+                    }
+                    document.body.removeChild(textarea);
+                }
+
+                function buildOrderManifestText(orderCode, name, deliveryDate, notes, items, total, revRef) {
+                    const itemLines = items.map(it => `  • ${it.qty}× ${it.brand} ${it.model} (${it.formatLabel}) — €${it.subtotal.toFixed(2)}`).join('\n');
+                    return [
+                        `🇱🇺 LUXTABAC RESERVE — ORDER #${orderCode}`,
+                        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+                        `👤 Customer: ${name}`,
+                        `📅 Scheduled Delivery: ${deliveryDate}`,
+                        notes ? `📍 Delivery Note: ${notes}` : null,
+                        `🛒 Ordered Items:`,
+                        itemLines,
+                        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+                        `💰 Total Transfer: €${total.toFixed(2)}`,
+                        `💳 Revolut Reference: ${revRef}`,
+                        `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+                        `Generated via LuxTabac Reserve (18+)`
+                    ].filter(Boolean).join('\n');
+                }
+
+                // =========================================================================
+                // 10. EVENT LISTENERS
+                // =========================================================================
+                // Age Verification
+                btnAgeConfirm.addEventListener('click', () => {
+                    sessionStorage.setItem('luxtabac_age_verified', '1');
+                    sessionStorage.removeItem('luxtabac_age_denied');
+                    ageModal.classList.add('hidden');
+                });
+                btnAgeDecline.addEventListener('click', () => {
+                    sessionStorage.setItem('luxtabac_age_denied', '1');
+                    ageDeniedMsg.classList.remove('hidden');
+                    if (ageButtonsRow) ageButtonsRow.classList.add('hidden');
+                    setTimeout(() => {
+                        window.location.href = 'https://www.google.com';
+                    }, 1800);
+                });
+
+                // Price Explorer Modal
+                btnOpenExplorer.addEventListener('click', () => {
+                    explorerSearch.value = '';
+                    renderPriceExplorer('');
+                    priceExplorerModal.classList.remove('hidden');
+                    explorerSearch.focus();
+                });
+                btnCloseExplorer.addEventListener('click', () => {
+                    priceExplorerModal.classList.add('hidden');
+                });
+                explorerSearch.addEventListener('input', (e) => {
+                    renderPriceExplorer(e.target.value);
+                });
+                btnExplorerManual.addEventListener('click', () => {
+                    priceExplorerModal.classList.add('hidden');
+                    setManualMode(true);
+                    manualBrandInput.focus();
+                });
+
+                // Revolut Tag Settings Popover
+                btnToggleRevtag.addEventListener('click', () => {
+                    revtagPopover.classList.toggle('hidden');
+                });
+                btnSaveRevtag.addEventListener('click', () => {
+                    const cleaned = inputMerchantRevtag.value.trim().replace(/^@+/, '').replace(/[^a-zA-Z0-9_.-]/g, '') || 'vladimtul';
+                    merchantRevtag = cleaned;
+                    inputMerchantRevtag.value = cleaned;
+                    headerRevtagLabel.textContent = cleaned;
+                    qrRevtagPill.textContent = `revolut.me/${cleaned}`;
+                    revtagPopover.classList.add('hidden');
+                    showToast(`Revolut recipient updated to @${cleaned}`);
+                });
+
+                // Mode Toggle Buttons
+                btnModeCatalog.addEventListener('click', () => setManualMode(false));
+                btnModeManual.addEventListener('click', () => {
+                    setManualMode(true);
+                    manualBrandInput.focus();
+                });
+                btnBackToCatalog.addEventListener('click', () => setManualMode(false));
+
+                // Catalog Dropdown Change
+                luCatalogSelect.addEventListener('change', () => {
+                    if (luCatalogSelect.value === '__MANUAL__') {
+                        setManualMode(true);
+                        manualBrandInput.focus();
+                    } else {
+                        updateCalculationAndUI();
+                    }
+                });
+
+                // Format Buttons (Carton vs Pack)
+                btnFormatCarton.addEventListener('click', () => setUnitFormat('carton'));
+                btnFormatPack.addEventListener('click', () => setUnitFormat('pack'));
+
+                // Manual Inputs Change
+                [manualBrandInput, manualModelInput, manualFormatDescInput, manualUnitPriceInput].forEach(el => {
+                    el.addEventListener('input', updateCalculationAndUI);
+                });
+
+                // Quantity Stepper
+                qtyMinusBtn.addEventListener('click', () => {
+                    const current = parseInt(quantityInput.value, 10) || 1;
+                    if (current > 1) {
+                        quantityInput.value = current - 1;
+                        updateCalculationAndUI();
+                    }
+                });
+                qtyPlusBtn.addEventListener('click', () => {
+                    const current = parseInt(quantityInput.value, 10) || 1;
+                    if (current < 100) {
+                        quantityInput.value = current + 1;
+                        updateCalculationAndUI();
+                    }
+                });
+                quantityInput.addEventListener('input', () => {
+                    let val = parseInt(quantityInput.value, 10);
+                    if (val > 100) quantityInput.value = 100;
+                    if (val < 1 && quantityInput.value !== '') quantityInput.value = 1;
+                    updateCalculationAndUI();
+                });
+
+                // Add Item to Multi-Item Basket
+                btnAddToBasket.addEventListener('click', () => {
+                    formErrorBox.classList.add('hidden');
+                    if (isManualMode) {
+                        if (!manualBrandInput.value.trim() || !manualModelInput.value.trim()) {
+                            formErrorText.textContent = 'Please enter both the Custom Brand and Model before adding to the list.';
+                            formErrorBox.classList.remove('hidden');
+                            return;
+                        }
+                    }
+                    const item = getCurrentConfiguredItem();
+                    orderBasket.push(item);
+                    quantityInput.value = 1;
+                    renderBasket();
+                    showToast(`Added ${item.qty}× ${item.brand} ${item.model} to order list`);
+                });
+
+                btnClearBasket.addEventListener('click', () => {
+                    orderBasket = [];
+                    renderBasket();
+                });
+
+                // Submit Order & Generate Revolut QR
+                orderForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    formErrorBox.classList.add('hidden');
+
+                    const name = customerNameInput.value.trim().slice(0, 100);
+                    const deliveryDate = deliveryDateInput.value;
+                    const notes = deliveryNotesInput.value.trim().slice(0, 250);
+
+                    if (!name || !deliveryDate) {
+                        formErrorText.textContent = 'Please provide your Full Name and desired Date of Delivery.';
+                        formErrorBox.classList.remove('hidden');
+                        return;
+                    }
+
+                    // Determine final items list (either basket items OR the currently configured item)
+                    let finalItems = [];
+                    if (orderBasket.length > 0) {
+                        finalItems = [...orderBasket];
+                    } else {
+                        if (isManualMode && (!manualBrandInput.value.trim() || !manualModelInput.value.trim())) {
+                            formErrorText.textContent = 'Please enter the Custom Brand and Model name (or switch back to the Luxembourg dropdown list).';
+                            formErrorBox.classList.remove('hidden');
+                            return;
+                        }
+                        finalItems = [getCurrentConfiguredItem()];
+                    }
+
+                    const grandTotal = finalItems.reduce((sum, it) => sum + it.subtotal, 0);
+                    const orderCode = 'LU-' + Math.floor(10000 + Math.random() * 90000);
+                    const firstItemSummary = finalItems.length === 1
+                        ? `${finalItems[0].qty}x ${finalItems[0].brand} ${finalItems[0].model}`
+                        : `${finalItems.length} items (${finalItems[0].brand}...)`;
+
+                    const revolutReference = `${orderCode} | ${name.split(' ')[0]} - ${firstItemSummary}`;
+
+                    // Populate Summary View
+                    summaryOrderId.textContent = `#${orderCode}`;
+                    summaryName.textContent = name;
+                    summaryDate.textContent = formatDisplayDate(deliveryDate);
+                    summaryTotal.textContent = `€${grandTotal.toFixed(2)}`;
+                    paymentRefCode.textContent = revolutReference;
+
+                    if (notes) {
+                        summaryNotes.textContent = notes;
+                        summaryNotesRow.classList.remove('hidden');
+                        summaryNotesRow.classList.add('flex');
+                    } else {
+                        summaryNotesRow.classList.add('hidden');
+                        summaryNotesRow.classList.remove('flex');
+                    }
+
+                    // Securely render items escaping all properties
+                    summaryItemsList.innerHTML = finalItems.map(item => `
+                    <div class="flex items-center justify-between bg-zinc-900/90 border border-zinc-800/80 rounded-xl px-3.5 py-2.5 text-xs">
+                        <div>
+                            <span class="font-bold text-white">${item.qty}× ${escapeHTML(item.brand)} ${escapeHTML(item.model)}</span>
+                            <span class="block text-[11px] text-zinc-400">${escapeHTML(item.formatLabel)} @ €${item.unitPrice.toFixed(2)}</span>
+                        </div>
+                        <span class="font-mono font-bold text-amber-400">€${item.subtotal.toFixed(2)}</span>
+                    </div>
+                `).join('');
+
+                    // Build Revolut Payment Link & Verified ISO QR Code
+                    const revolutUrl = `https://revolut.me/${encodeURIComponent(merchantRevtag)}?amount=${grandTotal.toFixed(2)}&currency=EUR&note=${encodeURIComponent(revolutReference)}`;
+                    qrRevtagPill.textContent = `revolut.me/${merchantRevtag}`;
+                    qrAmountBadge.textContent = `Send €${grandTotal.toFixed(2)}`;
+                    btnOpenRevolutDirect.href = revolutUrl;
+                    qrContainer.innerHTML = generateRevolutQRSvg(revolutUrl);
+
+                    // Build Full Order Text Manifest for WhatsApp & Clipboard Sharing
+                    currentOrderManifest = buildOrderManifestText(
+                        orderCode,
+                        name,
+                        formatDisplayDate(deliveryDate),
+                        notes,
+                        finalItems,
+                        grandTotal,
+                        revolutReference
+                    );
+
+                    if (btnShareWhatsapp) {
+                        btnShareWhatsapp.href = `https://wa.me/?text=${encodeURIComponent(currentOrderManifest)}`;
+                    }
+
+                    // Asynchronously persist order into SQLite database via /api/orders
+                    const orderPayload = {
+                        orderCode,
+                        customerName: name,
+                        deliveryDate,
+                        deliveryNotes: notes,
+                        items: finalItems,
+                        grandTotal,
+                        revolutReference,
+                        totalCigs: finalItems.reduce((acc, it) => acc + (it.totalCigs || 0), 0)
+                    };
+                    saveOrderToBackend(orderPayload);
+
+                    // Switch to Payment View
+                    paymentConfirmedBox.classList.add('hidden');
+                    orderView.classList.add('hidden');
+                    paymentView.classList.remove('hidden');
+
+                    step1Badge.className = 'px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-400 transition';
+                    step2Badge.className = 'px-2.5 py-1 rounded-lg bg-amber-500 text-zinc-950 font-semibold transition';
+
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+
+                // Copy Reference, Full Manifest & Revolut Link
+                btnCopyRef.addEventListener('click', () => {
+                    copyTextToClipboard(paymentRefCode.textContent.trim(), 'Transfer reference note copied!');
+                });
+
+                if (btnCopyFullManifest) {
+                    btnCopyFullManifest.addEventListener('click', () => {
+                        if (currentOrderManifest) {
+                            copyTextToClipboard(currentOrderManifest, 'Complete order breakdown copied to clipboard!');
+                        }
+                    });
+                }
+
+                btnCopyRevolutLink.addEventListener('click', () => {
+                    copyTextToClipboard(btnOpenRevolutDirect.href, 'Revolut.me payment link copied!');
+                });
+
+                // Confirm Transfer Sent
+                btnConfirmPaid.addEventListener('click', () => {
+                    paymentConfirmedBox.classList.remove('hidden');
+                    showToast('Revolut transfer logged! Don\'t forget to share your order details.');
+                    paymentConfirmedBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+
+                // Edit Existing Order
+                btnEditOrder.addEventListener('click', () => {
+                    paymentView.classList.add('hidden');
+                    orderView.classList.remove('hidden');
+                    step1Badge.className = 'px-2.5 py-1 rounded-lg bg-amber-500 text-zinc-950 font-semibold transition';
+                    step2Badge.className = 'px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-400 transition';
+                });
+
+                // Start New Order
+                btnNewOrder.addEventListener('click', () => {
+                    orderForm.reset();
+                    orderBasket = [];
+                    currentOrderManifest = '';
+                    setManualMode(false);
+                    setUnitFormat('carton');
+                    setDefaultDeliveryDate();
+                    renderBasket();
+
+                    paymentView.classList.add('hidden');
+                    orderView.classList.remove('hidden');
+                    step1Badge.className = 'px-2.5 py-1 rounded-lg bg-amber-500 text-zinc-950 font-semibold transition';
+                    step2Badge.className = 'px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-400 transition';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+
+                // =========================================================================
+                // 10.5. ORDER PERSISTENCE, HISTORY DRAWER, 1-CLICK REBUY & RECEIPT EXPORT
+                // =========================================================================
+                const btnOpenHistory = document.getElementById('btn-open-history');
+                const btnCloseHistory = document.getElementById('btn-close-history');
+                const btnRefreshHistory = document.getElementById('btn-refresh-history');
+                const historyDrawer = document.getElementById('history-drawer');
+                const historyDrawerBackdrop = document.getElementById('history-drawer-backdrop');
+                const historyDrawerPanel = document.getElementById('history-drawer-panel');
+                const historyList = document.getElementById('history-list');
+                const historyLoading = document.getElementById('history-loading');
+                const historyEmpty = document.getElementById('history-empty');
+                const historyBadge = document.getElementById('history-badge');
+                const drawerOrdersCountBadge = document.getElementById('drawer-orders-count-badge');
+                const drawerAllowanceStatus = document.getElementById('drawer-allowance-status');
+
+                const receiptModal = document.getElementById('receipt-modal');
+                const receiptContentArea = document.getElementById('receipt-content-area');
+                const btnCloseReceipt = document.getElementById('btn-close-receipt');
+                const btnCopyReceipt = document.getElementById('btn-copy-receipt');
+                const btnPrintReceipt = document.getElementById('btn-print-receipt');
+
+                let cachedHistoryOrders = [];
+                let activeReceiptText = '';
+
+                // Asynchronous Order Saver (to SQLite via /api/orders)
+                async function saveOrderToBackend(orderPayload) {
+                    try {
+                        const response = await fetch('/api/orders', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(orderPayload)
+                        });
+                        const data = await response.json();
+                        if (data.success && data.order) {
+                            cachedHistoryOrders.unshift(data.order);
+                            updateHistoryBadgeCount(cachedHistoryOrders.length);
+                        }
+                    } catch (err) {
+                        console.warn('Could not persist order to /api/orders (running offline?):', err);
+                    }
+                }
+
+                function updateHistoryBadgeCount(count) {
+                    if (historyBadge) {
+                        if (count > 0) {
+                            historyBadge.textContent = count > 99 ? '99+' : count;
+                            historyBadge.classList.remove('hidden');
+                        } else {
+                            historyBadge.classList.add('hidden');
+                        }
+                    }
+                    if (drawerOrdersCountBadge) {
+                        drawerOrdersCountBadge.textContent = count;
+                    }
+                }
+
+                function openHistoryDrawer() {
+                    if (!historyDrawer) return;
+                    historyDrawer.classList.remove('pointer-events-none');
+                    historyDrawerBackdrop.classList.remove('opacity-0');
+                    historyDrawerBackdrop.classList.add('opacity-100');
+                    historyDrawerPanel.classList.remove('translate-x-full');
+                    historyDrawerPanel.classList.add('translate-x-0');
+                    loadHistoryFromApi();
+                }
+
+                function closeHistoryDrawer() {
+                    if (!historyDrawer) return;
+                    historyDrawerBackdrop.classList.remove('opacity-100');
+                    historyDrawerBackdrop.classList.add('opacity-0');
+                    historyDrawerPanel.classList.remove('translate-x-0');
+                    historyDrawerPanel.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        historyDrawer.classList.add('pointer-events-none');
+                    }, 300);
+                }
+
+                async function loadHistoryFromApi() {
+                    if (!historyList) return;
+                    historyLoading.classList.remove('hidden');
+                    historyEmpty.classList.add('hidden');
+                    historyList.innerHTML = '';
+
+                    try {
+                        const response = await fetch('/api/orders?limit=50');
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        const data = await response.json();
+                        cachedHistoryOrders = (data.orders && Array.isArray(data.orders)) ? data.orders : [];
+                    } catch (err) {
+                        console.warn('Error fetching orders from /api/orders:', err);
+                    } finally {
+                        historyLoading.classList.add('hidden');
+                        renderHistoryOrders();
+                    }
+                }
+
+                function renderHistoryOrders() {
+                    if (!historyList) return;
+                    updateHistoryBadgeCount(cachedHistoryOrders.length);
+
+                    if (cachedHistoryOrders.length === 0) {
+                        historyEmpty.classList.remove('hidden');
+                        historyList.innerHTML = '';
+                        return;
+                    }
+
+                    historyEmpty.classList.add('hidden');
+
+                    // Calculate cumulative volume for allowance status in drawer
+                    const totalVolume = cachedHistoryOrders.reduce((sum, o) => sum + (o.totalCigs || 0), 0);
+                    if (drawerAllowanceStatus) {
+                        if (totalVolume <= 800) {
+                            drawerAllowanceStatus.className = 'font-mono text-emerald-400 font-bold';
+                            drawerAllowanceStatus.textContent = `${totalVolume} / 800 cigs`;
+                        } else {
+                            drawerAllowanceStatus.className = 'font-mono text-amber-400 font-bold';
+                            drawerAllowanceStatus.textContent = `${totalVolume} cigs (High volume)`;
+                        }
+                    }
+
+                    historyList.innerHTML = cachedHistoryOrders.map(order => {
+                        const totalCigs = order.totalCigs || (order.items || []).reduce((sum, it) => sum + (it.totalCigs || 0), 0);
+                        const safeCode = escapeHTML(order.orderCode || 'LU-XXXX');
+                        const safeName = escapeHTML(order.customerName || 'Anonymous');
+                        const safeTotal = Number(order.grandTotal || 0).toFixed(2);
+                        const safeDate = order.deliveryDate ? escapeHTML(formatDisplayDate(order.deliveryDate)) : 'Immediate';
+                        const safeCreated = order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'Recent';
+                        const itemCount = Array.isArray(order.items) ? order.items.length : 0;
+                        const itemsSummary = Array.isArray(order.items) && order.items.length > 0
+                            ? order.items.map(it => `${it.qty}× ${escapeHTML(it.brand)} ${escapeHTML(it.model)}`).join(', ')
+                            : 'Tobacco products';
+
+                        const allowanceClass = totalCigs <= 800 ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/10 text-amber-400 border-amber-500/30';
+                        const allowanceLabel = totalCigs <= 800 ? `~${totalCigs} cigs` : `⚠️ ${totalCigs} cigs (>800)`;
+
+                        return `
+                        <div class="bg-zinc-900 border border-zinc-800/90 rounded-2xl p-4 transition hover:border-zinc-700 shadow-md">
+                            <div class="flex items-start justify-between gap-3 mb-2">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-mono font-bold text-amber-400 text-sm">#${safeCode}</span>
+                                        <span class="text-[10px] px-2 py-0.5 rounded-full border font-mono ${allowanceClass}">
+                                            ${allowanceLabel}
+                                        </span>
+                                    </div>
+                                    <p class="text-[11px] text-zinc-400 mt-0.5">${safeName} • Target: ${safeDate}</p>
+                                </div>
+                                <span class="text-sm font-mono font-bold text-white">€${safeTotal}</span>
+                            </div>
+
+                            <p class="text-xs text-zinc-300 line-clamp-2 mb-3 bg-zinc-950/60 p-2 rounded-xl border border-zinc-800/60">
+                                ${itemsSummary}
+                            </p>
+
+                            <div class="flex items-center gap-2 pt-1 border-t border-zinc-800/60">
+                                <button type="button" class="btn-rebuy-order flex-1 py-2 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-sm" data-code="${safeCode}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    <span>Rebuy Basket</span>
+                                </button>
+                                <button type="button" class="btn-receipt-order py-2 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium text-xs transition flex items-center gap-1" data-code="${safeCode}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    <span>Slip</span>
+                                </button>
+                            </div>
+                        </div>
+                        `;
+                    }).join('');
+
+                    // Attach 1-Click Rebuy Handlers
+                    document.querySelectorAll('.btn-rebuy-order').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const code = btn.getAttribute('data-code');
+                            handleOneClickRebuy(code);
+                        });
+                    });
+
+                    // Attach Receipt Slip Handlers
+                    document.querySelectorAll('.btn-receipt-order').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const code = btn.getAttribute('data-code');
+                            showReceiptSlip(code);
+                        });
+                    });
+                }
+
+                // 1-Click Rebuy: Hydrate Active Cart & Navigate
+                function handleOneClickRebuy(orderCode) {
+                    const order = cachedHistoryOrders.find(o => o.orderCode === orderCode);
+                    if (!order || !order.items || order.items.length === 0) {
+                        showToast('Unable to rebuy: order contains no items');
+                        return;
+                    }
+
+                    // Restore customer details if available
+                    if (order.customerName && order.customerName !== 'Anonymous') {
+                        document.getElementById('input-customer-name').value = order.customerName;
+                    }
+                    if (order.deliveryNotes) {
+                        document.getElementById('input-delivery-notes').value = order.deliveryNotes;
+                    }
+
+                    // Populate basket with deep copy of historical items
+                    orderBasket = order.items.map(it => ({
+                        id: it.id || (it.brand + '-' + it.model).toLowerCase().replace(/\s+/g, '-'),
+                        brand: it.brand,
+                        model: it.model,
+                        qty: Number(it.qty) || 1,
+                        unitFormat: it.unitFormat || 'carton',
+                        formatLabel: it.formatLabel || `${it.qty}x Carton`,
+                        unitPrice: Number(it.unitPrice) || 0,
+                        subtotal: Number(it.subtotal) || 0,
+                        packPrice: Number(it.packPrice) || 0,
+                        totalCigs: Number(it.totalCigs) || (it.unitFormat === 'carton' ? (it.qty * 200) : 0)
+                    }));
+
+                    renderBasket();
+                    updateCalculationAndUI();
+                    closeHistoryDrawer();
+
+                    // Switch view to Order Builder if in Payment view
+                    if (!paymentView.classList.contains('hidden')) {
+                        paymentView.classList.add('hidden');
+                        orderView.classList.remove('hidden');
+                        step1Badge.className = 'px-2.5 py-1 rounded-lg bg-amber-500 text-zinc-950 font-semibold transition';
+                        step2Badge.className = 'px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-400 transition';
+                    }
+
+                    // Smooth scroll to basket container
+                    const basketEl = document.getElementById('basket-container');
+                    if (basketEl && !basketEl.classList.contains('hidden')) {
+                        basketEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        document.getElementById('order-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+
+                    showToast(`Restored ${order.items.length} items from order #${orderCode}`);
+                }
+
+                // Receipt Slip Modal Logic
+                function showReceiptSlip(orderCode) {
+                    const order = cachedHistoryOrders.find(o => o.orderCode === orderCode);
+                    if (!order) return;
+
+                    const formattedDate = order.deliveryDate ? formatDisplayDate(order.deliveryDate) : 'Immediate';
+                    const itemsText = (order.items || []).map(it => `  • ${it.qty}x ${it.brand} ${it.model} (${it.formatLabel}) - €${Number(it.subtotal).toFixed(2)}`).join('\n');
+
+                    activeReceiptText = [
+                        '========================================',
+                        '       LUXTABAC RESERVE RECEIPT         ',
+                        '   Official Luxembourg Duty-Paid Order  ',
+                        '========================================',
+                        `ORDER CODE:  #${order.orderCode}`,
+                        `CUSTOMER:    ${order.customerName || 'Anonymous'}`,
+                        `TARGET DATE: ${formattedDate}`,
+                        `TOTAL CIGS:  ${order.totalCigs || 'N/A'} (EU Guide: max 800)`,
+                        '----------------------------------------',
+                        'ITEMS ORDERED:',
+                        itemsText,
+                        '----------------------------------------',
+                        `TOTAL PAID:  EUR ${Number(order.grandTotal).toFixed(2)}`,
+                        `PAYMENT:     Revolut P2P Transfer`,
+                        `REFERENCE:   ${order.revolutReference || 'N/A'}`,
+                        '========================================',
+                        '   Loi modifiée du 11 août 2006 (18+)   ',
+                        '       Luxembourg Tax-Stamp Certified   ',
+                        '========================================'
+                    ].join('\n');
+
+                    if (receiptContentArea) {
+                        receiptContentArea.innerHTML = `
+                            <div class="bg-zinc-950 p-4 rounded-2xl border border-zinc-800 text-zinc-300 leading-relaxed whitespace-pre-wrap selection:bg-amber-500 selection:text-zinc-950">
+${escapeHTML(activeReceiptText)}
+                            </div>
+                        `;
+                    }
+
+                    if (receiptModal) {
+                        receiptModal.classList.remove('hidden');
+                    }
+                }
+
+                // Event Listeners for History Drawer & Receipt Modal
+                if (btnOpenHistory) btnOpenHistory.addEventListener('click', openHistoryDrawer);
+                if (btnCloseHistory) btnCloseHistory.addEventListener('click', closeHistoryDrawer);
+                if (historyDrawerBackdrop) historyDrawerBackdrop.addEventListener('click', closeHistoryDrawer);
+                if (btnRefreshHistory) btnRefreshHistory.addEventListener('click', loadHistoryFromApi);
+
+                if (btnCloseReceipt && receiptModal) {
+                    btnCloseReceipt.addEventListener('click', () => receiptModal.classList.add('hidden'));
+                    receiptModal.addEventListener('click', (e) => {
+                        if (e.target === receiptModal) receiptModal.classList.add('hidden');
+                    });
+                }
+
+                if (btnCopyReceipt) {
+                    btnCopyReceipt.addEventListener('click', () => {
+                        if (activeReceiptText) {
+                            copyTextToClipboard(activeReceiptText, 'Receipt text copied to clipboard!');
+                        }
+                    });
+                }
+
+                if (btnPrintReceipt) {
+                    btnPrintReceipt.addEventListener('click', () => {
+                        window.print();
+                    });
+                }
+
+                // =========================================================================
+                // 11. INITIALIZATION & AGE ENFORCEMENT
+                // =========================================================================
+                if (sessionStorage.getItem('luxtabac_age_denied') === '1') {
+                    ageDeniedMsg.classList.remove('hidden');
+                    if (ageButtonsRow) ageButtonsRow.classList.add('hidden');
+                } else if (sessionStorage.getItem('luxtabac_age_verified') === '1') {
+                    ageModal.classList.add('hidden');
+                }
+
+                populateCatalogDropdown();
+                setDefaultDeliveryDate();
+                updateCalculationAndUI();
+                loadHistoryFromApi();
+            })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "luxtabac-reserve",
+  "version": "1.0.0",
+  "description": "Luxembourg Tobacco Reserve & Cross-Border Order Persistence on Vercel with Local SQLite",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "keywords": [
+    "luxtabac",
+    "sqlite",
+    "vercel",
+    "tobacco-catalog"
+  ],
+  "author": "LuxTabac Engineering",
+  "license": "ISC",
+  "devDependencies": {
+    "fs-extra": "^11.4.1",
+    "js-yaml": "^5.5.0"
+  }
+}
