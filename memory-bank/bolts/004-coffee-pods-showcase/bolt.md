@@ -3,14 +3,23 @@ id: 004-coffee-pods-showcase
 unit: 002-promotional-cross-category-showcase
 intent: 002-checkout-refinement-and-promotions
 type: simple-construction-bolt
-status: pending
+status: completed
 stories:
   - 001-coffee-pods-showcase
 created: '2026-10-19T23:18:00Z'
-started: null
-completed: null
-current_stage: null
-stages_completed: []
+started: '2026-10-19T23:25:00Z'
+completed: '2026-10-19T23:43:00Z'
+current_stage: completed
+stages_completed:
+  - name: plan
+    completed: '2026-10-19T23:25:00Z'
+    artifact: implementation-plan.md
+  - name: implement
+    completed: '2026-10-19T23:28:00Z'
+    artifact: implementation-walkthrough.md
+  - name: test
+    completed: '2026-10-19T23:41:00Z'
+    artifact: test-walkthrough.md
 requires_bolts:
   - 003-checkout-streamline
 enables_bolts: []
@@ -45,6 +54,6 @@ Introduce a cross-category promotional section highlighting Luxembourg tax-advan
 
 ## Stages
 
-- [ ] **1. Plan**: Pending → implementation-plan.md
-- [ ] **2. Implement**: Pending → index.html
-- [ ] **3. Test**: Pending → test-walkthrough.md
+- [x] **1. Plan**: Completed → implementation-plan.md
+- [x] **2. Implement**: Completed → implementation-walkthrough.md
+- [x] **3. Test**: Completed → test-walkthrough.md

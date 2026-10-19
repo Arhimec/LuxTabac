@@ -24,20 +24,20 @@
 ### 002-checkout-refinement-and-promotions
 
 #### Unit 001: 001-checkout-streamline-and-navigation
-- [x] **001-remove-logistics-fields.md** ✅ GENERATED: Remove delivery date and notes from UI and order validation - Must - Planned
-- [x] **002-home-navigation-reset.md** ✅ GENERATED: Implement Header Home/Logo reset action while maintaining 18+ verification - Must - Planned
-- [x] **003-interactive-tip-chips.md** ✅ GENERATED: Interactive tip options with real-time recalculation of total, Revolut QR, and receipt - Must - Planned
+- [x] **001-remove-logistics-fields.md** ✅ GENERATED: Remove delivery date and notes from UI and order validation - Must - Completed
+- [x] **002-home-navigation-reset.md** ✅ GENERATED: Implement Header Home/Logo reset action while maintaining 18+ verification - Must - Completed
+- [x] **003-interactive-tip-chips.md** ✅ GENERATED: Interactive tip options with real-time recalculation of total, Revolut QR, and receipt - Must - Completed
 
 #### Unit 002: 002-promotional-cross-category-showcase
-- [x] **001-coffee-pods-showcase.md** ✅ GENERATED: Branded promo showcase cards with contact/inquiry notice - Must - Planned
+- [x] **001-coffee-pods-showcase.md** ✅ GENERATED: Branded promo showcase cards with contact/inquiry notice - Must - Completed
 
 ---
 
 ## Stories by Status
 
 - **Total Stories**: 10
-- **Planned**: 10
+- **Planned**: 0
 - **Generated**: 10
 - **In Progress**: 0
-- **Completed**: 6
+- **Completed**: 10
 

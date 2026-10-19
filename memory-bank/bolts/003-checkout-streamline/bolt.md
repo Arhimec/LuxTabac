@@ -3,16 +3,25 @@ id: 003-checkout-streamline
 unit: 001-checkout-streamline-and-navigation
 intent: 002-checkout-refinement-and-promotions
 type: simple-construction-bolt
-status: pending
+status: completed
 stories:
   - 001-remove-logistics-fields
   - 002-home-navigation-reset
   - 003-interactive-tip-chips
 created: '2026-10-19T23:17:50Z'
-started: null
-completed: null
-current_stage: null
-stages_completed: []
+started: '2026-10-19T23:19:20Z'
+completed: '2026-10-19T23:42:00Z'
+current_stage: completed
+stages_completed:
+  - name: plan
+    completed: '2026-10-19T23:19:20Z'
+    artifact: implementation-plan.md
+  - name: implement
+    completed: '2026-10-19T23:25:00Z'
+    artifact: implementation-walkthrough.md
+  - name: test
+    completed: '2026-10-19T23:41:00Z'
+    artifact: test-walkthrough.md
 requires_bolts:
   - 002-order-history-ui
 enables_bolts:
@@ -51,6 +60,6 @@ Streamline the customer checkout experience by removing delivery date and notes,
 
 ## Stages
 
-- [ ] **1. Plan**: Pending → implementation-plan.md
-- [ ] **2. Implement**: Pending → index.html, api/_db.js, api/orders.js
-- [ ] **3. Test**: Pending → test-walkthrough.md
+- [x] **1. Plan**: Completed → implementation-plan.md
+- [x] **2. Implement**: Completed → implementation-walkthrough.md
+- [x] **3. Test**: Completed → test-walkthrough.md

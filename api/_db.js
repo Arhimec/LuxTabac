@@ -44,11 +44,18 @@ function getDb() {
                 grand_total REAL NOT NULL,
                 revolut_reference TEXT,
                 total_cigs INTEGER DEFAULT 0,
+                tip_amount REAL DEFAULT 0,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
             CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at DESC);
             CREATE INDEX IF NOT EXISTS idx_orders_code ON orders(order_code);
         `);
+
+        try {
+            dbInstance.exec('ALTER TABLE orders ADD COLUMN tip_amount REAL DEFAULT 0;');
+        } catch {
+            // column already exists
+        }
     }
     return dbInstance;
 }
@@ -67,6 +74,7 @@ function insertOrder(order) {
     const deliveryDate = order.deliveryDate ? String(order.deliveryDate).trim() : null;
     const deliveryNotes = order.deliveryNotes ? String(order.deliveryNotes).trim() : null;
     const grandTotal = Number(order.grandTotal) || 0;
+    const tipAmount = Number(order.tipAmount) || 0;
     const revolutReference = order.revolutReference ? String(order.revolutReference).trim() : null;
     const totalCigs = Number(order.totalCigs) || 0;
 
@@ -78,9 +86,10 @@ function insertOrder(order) {
             delivery_notes,
             items_json,
             grand_total,
+            tip_amount,
             revolut_reference,
             total_cigs
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     insertStmt.run(
@@ -90,6 +99,7 @@ function insertOrder(order) {
         deliveryNotes,
         itemsJson,
         grandTotal,
+        tipAmount,
         revolutReference,
         totalCigs
     );
@@ -125,6 +135,7 @@ function getRecentOrders(limit = 50) {
             deliveryNotes: row.delivery_notes,
             items: items,
             grandTotal: Number(row.grand_total),
+            tipAmount: Number(row.tip_amount) || 0,
             revolutReference: row.revolut_reference,
             totalCigs: Number(row.total_cigs),
             createdAt: row.created_at
@@ -161,6 +172,7 @@ function getOrderByCode(orderCode) {
         deliveryNotes: row.delivery_notes,
         items: items,
         grandTotal: Number(row.grand_total),
+        tipAmount: Number(row.tip_amount) || 0,
         revolutReference: row.revolut_reference,
         totalCigs: Number(row.total_cigs),
         createdAt: row.created_at

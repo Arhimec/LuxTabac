@@ -72,6 +72,7 @@ module.exports = async function handler(req, res) {
                 deliveryNotes: body.deliveryNotes,
                 items: body.items,
                 grandTotal: body.grandTotal,
+                tipAmount: body.tipAmount,
                 revolutReference: body.revolutReference,
                 totalCigs: body.totalCigs
             });
