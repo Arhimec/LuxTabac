@@ -75,5 +75,24 @@ vercel rollback prod
   - Corrected DOM element IDs in 1-Click Rebuy.
 - **Automated Tests**: 15 / 15 tests passing.
 
+---
+
+## Deployment: v1.0.2 → Production (Vercel Production)
+
+### Details
+- **Version**: `v1.0.2`
+- **Environment**: Production (`vercel-production`)
+- **Timestamp**: `2026-10-19T22:41:00Z`
+- **Commit**: `95ba1b7` (*fix(ui): close price-explorer-modal div preventing page content from being hidden*)
+- **Status**: ✅ Deployment Verified & Active
+- **Root Cause & Fix**:
+  - `#price-explorer-modal` had an unclosed outer `<div>` tag right above the history drawer and header.
+  - Because `#price-explorer-modal` is initialized with `class="hidden"`, the browser DOM parser treated the entire page (`<header>`, `<main>`, Order Builder form) as children of the hidden price modal.
+  - When the user clicked age verification, `#age-modal` closed, but the entire page was invisible (black screen) because it was trapped inside `#price-explorer-modal.hidden`.
+  - Added the missing closing `</div>`, completely restoring normal DOM layout.
+- **Verification**: Verified via Playwright / Browser Agent screenshot showing full active catalog and order form.
+- **Automated Tests**: 15 / 15 tests passing.
+
+
 
 
