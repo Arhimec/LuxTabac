@@ -56,4 +56,24 @@ vercel rollback preview
 vercel rollback prod
 ```
 
+---
+
+## Deployment: v1.0.1 → Production (Vercel Production)
+
+### Details
+- **Version**: `v1.0.1`
+- **Environment**: Production (`vercel-production`)
+- **Timestamp**: `2026-10-19T22:31:00Z`
+- **Commit**: `0600dbf` (*fix(ui): resolve age verification modal dismissal and qrcode CDN script loading*)
+- **Status**: ✅ Deployment Completed & Active
+- **Build Output**: Built in 609ms, outputs deployed to Vercel edge/serverless platform
+- **Changes**:
+  - Fixed `#age-modal` CSS specificity (`#age-modal.hidden { display: none !important; }`), ensuring modal is dismissed when clicking 18+ confirmation.
+  - Added defensive inline `onclick` handler on confirm button.
+  - Replaced relative `qrcode.min.js` with jsDelivr CDN (`https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js`), resolving `SyntaxError: Unexpected token '<'`.
+  - Added safe `sessionStorage` helpers for private/restricted browsing modes.
+  - Corrected DOM element IDs in 1-Click Rebuy.
+- **Automated Tests**: 15 / 15 tests passing.
+
+
 
