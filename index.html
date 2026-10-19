@@ -7,8 +7,9 @@
     <title>LuxTabac Reserve — 2026 Luxembourg Official Catalog & Revolut Checkout</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Standalone Offline QR Code Generator (ISO/IEC 18004 compliant) -->
-    <script src="qrcode.min.js"></script>
+    <!-- Standalone QR Code Generator (ISO/IEC 18004 compliant) with CDN & local fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <script>if (typeof qrcode === 'undefined') { document.write('<script src="qrcode.min.js"><\/script>'); }</script>
     <!-- Google Fonts: Inter & JetBrains Mono -->
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
@@ -86,6 +87,11 @@
             padding: 6px;
             font-weight: 400;
         }
+
+        /* Enforce absolute modal dismissal regardless of Tailwind flex precedence */
+        #age-modal.hidden {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -116,6 +122,7 @@
             </p>
             <div id="age-buttons-row" class="flex flex-col sm:flex-row gap-3">
                 <button id="btn-age-confirm"
+                    onclick="try{sessionStorage.setItem('luxtabac_age_verified','1');sessionStorage.removeItem('luxtabac_age_denied');}catch(e){}var m=document.getElementById('age-modal');if(m){m.style.setProperty('display','none','important');m.classList.remove('flex');m.classList.add('hidden');}"
                     class="flex-1 py-3.5 px-5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-sm transition shadow-lg shadow-amber-500/15">
                     I am 18 or older — Enter
                 </button>
@@ -1680,14 +1687,32 @@
                 // =========================================================================
                 // 10. EVENT LISTENERS
                 // =========================================================================
+                // Storage Helpers (safe against private/incognito mode exceptions)
+                function safeSessionSet(key, val) {
+                    try { sessionStorage.setItem(key, val); } catch (e) { /* ignore quota/security errors */ }
+                }
+                function safeSessionGet(key) {
+                    try { return sessionStorage.getItem(key); } catch (e) { return null; }
+                }
+                function safeSessionRemove(key) {
+                    try { sessionStorage.removeItem(key); } catch (e) { /* ignore */ }
+                }
+                function dismissAgeModal() {
+                    if (ageModal) {
+                        ageModal.style.setProperty('display', 'none', 'important');
+                        ageModal.classList.remove('flex');
+                        ageModal.classList.add('hidden');
+                    }
+                }
+
                 // Age Verification
                 btnAgeConfirm.addEventListener('click', () => {
-                    sessionStorage.setItem('luxtabac_age_verified', '1');
-                    sessionStorage.removeItem('luxtabac_age_denied');
-                    ageModal.classList.add('hidden');
+                    safeSessionSet('luxtabac_age_verified', '1');
+                    safeSessionRemove('luxtabac_age_denied');
+                    dismissAgeModal();
                 });
                 btnAgeDecline.addEventListener('click', () => {
-                    sessionStorage.setItem('luxtabac_age_denied', '1');
+                    safeSessionSet('luxtabac_age_denied', '1');
                     ageDeniedMsg.classList.remove('hidden');
                     if (ageButtonsRow) ageButtonsRow.classList.add('hidden');
                     setTimeout(() => {
@@ -2156,11 +2181,11 @@
                     }
 
                     // Restore customer details if available
-                    if (order.customerName && order.customerName !== 'Anonymous') {
-                        document.getElementById('input-customer-name').value = order.customerName;
+                    if (order.customerName && order.customerName !== 'Anonymous' && customerNameInput) {
+                        customerNameInput.value = order.customerName;
                     }
-                    if (order.deliveryNotes) {
-                        document.getElementById('input-delivery-notes').value = order.deliveryNotes;
+                    if (order.deliveryNotes && deliveryNotesInput) {
+                        deliveryNotesInput.value = order.deliveryNotes;
                     }
 
                     // Populate basket with deep copy of historical items
@@ -2190,11 +2215,11 @@
                     }
 
                     // Smooth scroll to basket container
-                    const basketEl = document.getElementById('basket-container');
+                    const basketEl = document.getElementById('basket-section');
                     if (basketEl && !basketEl.classList.contains('hidden')) {
                         basketEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    } else {
-                        document.getElementById('order-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } else if (orderForm) {
+                        orderForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
 
                     showToast(`Restored ${order.items.length} items from order #${orderCode}`);
@@ -2273,11 +2298,11 @@ ${escapeHTML(activeReceiptText)}
                 // =========================================================================
                 // 11. INITIALIZATION & AGE ENFORCEMENT
                 // =========================================================================
-                if (sessionStorage.getItem('luxtabac_age_denied') === '1') {
+                if (safeSessionGet('luxtabac_age_denied') === '1') {
                     ageDeniedMsg.classList.remove('hidden');
                     if (ageButtonsRow) ageButtonsRow.classList.add('hidden');
-                } else if (sessionStorage.getItem('luxtabac_age_verified') === '1') {
-                    ageModal.classList.add('hidden');
+                } else if (safeSessionGet('luxtabac_age_verified') === '1') {
+                    dismissAgeModal();
                 }
 
                 populateCatalogDropdown();

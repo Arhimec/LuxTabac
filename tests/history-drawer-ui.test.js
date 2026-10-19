@@ -125,4 +125,30 @@ test('Order History UI & Integration Tests', async (t) => {
         assert.ok(receiptText.includes('EUR 130.00'));
         assert.ok(receiptText.includes('REV-SOPHIE-99'));
     });
+
+    await t.test('Age Verification modal dismissal & resilience', () => {
+        // 1. CSS display: none !important rule exists
+        assert.ok(
+            htmlContent.includes('#age-modal.hidden') && htmlContent.includes('display: none !important'),
+            'CSS must enforce #age-modal.hidden with display: none !important to override Tailwind flex'
+        );
+
+        // 2. Button has defensive inline onclick fallback
+        assert.ok(
+            htmlContent.includes('onclick="try{sessionStorage.setItem(\'luxtabac_age_verified\',\'1\')'),
+            'Confirm button must include inline onclick fallback for instant dismissal'
+        );
+
+        // 3. Safe session storage helpers implemented
+        assert.ok(htmlContent.includes('function safeSessionSet('), 'Must define safeSessionSet helper');
+        assert.ok(htmlContent.includes('function safeSessionGet('), 'Must define safeSessionGet helper');
+        assert.ok(htmlContent.includes('function dismissAgeModal('), 'Must define dismissAgeModal helper');
+
+        // 4. Reliable CDN for qrcode with fallback
+        assert.ok(
+            htmlContent.includes('https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js'),
+            'QR code generator must use CDN to avoid 404 HTML syntax errors'
+        );
+    });
 });
+
