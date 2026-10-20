@@ -47,12 +47,19 @@
 - [x] **002-admin-settings-management.md** ✅ GENERATED: Admin panel for Revtag, WhatsApp link, and coffee visibility toggle - Must - Completed
 - [x] **003-admin-coffee-and-custom-items.md** ✅ GENERATED: Admin coffee items CRUD and buyer custom cigarette entries - Must - Completed
 
+### 004-wero-qr-payment-method
+
+#### Unit 001: 001-wero-payment-integration
+- [x] **001-admin-wero-settings.md** ✅ GENERATED: Admin Wero recipient configuration & API persistence - Must - Planned
+- [x] **002-payment-method-selector-tabs.md** ✅ GENERATED: Step 2 payment switcher UI & state coordination - Must - Planned
+- [x] **003-wero-qr-code-generation.md** ✅ GENERATED: Dynamic Wero QR code generation, pay links, and receipt slip sync - Must - Planned
+
 ---
 
 ## Stories by Status
 
-- **Total Stories**: 18
-- **Planned**: 0
-- **Generated**: 18
+- **Total Stories**: 21
+- **Planned**: 3
+- **Generated**: 21
 - **In Progress**: 0
 - **Completed**: 18
