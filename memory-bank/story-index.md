@@ -39,8 +39,8 @@
 - [x] **003-buyer-name-prefiltering.md** ✅ GENERATED: Buyer name history pre-filtering - Must - Completed
 
 #### Unit 002: 002-weekly-quota-governance
-- [x] **001-weekly-quota-backend.md** ✅ GENERATED: Weekly 800-cig quota calculation from Monday 00:00 & server rejection - Must - Planned
-- [x] **002-weekly-quota-ui-enforcement.md** ✅ GENERATED: Quota capacity meter and threshold warning modal - Must - Planned
+- [x] **001-weekly-quota-backend.md** ✅ GENERATED: Weekly 800-cig quota calculation from Monday 00:00 & server rejection - Must - Completed
+- [x] **002-weekly-quota-ui-enforcement.md** ✅ GENERATED: Quota capacity meter and threshold warning modal - Must - Completed
 
 #### Unit 003: 003-admin-auth-and-backoffice
 - [x] **001-admin-auth-and-session.md** ✅ GENERATED: Password-protected admin authentication with session token - Must - Planned
@@ -52,7 +52,7 @@
 ## Stories by Status
 
 - **Total Stories**: 18
-- **Planned**: 5
+- **Planned**: 3
 - **Generated**: 18
 - **In Progress**: 0
-- **Completed**: 13
+- **Completed**: 15

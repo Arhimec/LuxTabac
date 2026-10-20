@@ -3,15 +3,18 @@ id: 006-weekly-quota-governance
 unit: 002-weekly-quota-governance
 intent: 003-admin-control-and-quota-governance
 type: simple-construction-bolt
-status: pending
+status: completed
 stories:
   - 001-weekly-quota-backend
   - 002-weekly-quota-ui-enforcement
 created: '2026-10-20T19:47:00Z'
-started: null
-completed: null
-current_stage: null
-stages_completed: []
+started: '2026-10-20T20:11:00Z'
+completed: '2026-10-20T20:39:00Z'
+current_stage: 3. Test
+stages_completed:
+  - 1. Plan
+  - 2. Implement
+  - 3. Test
 requires_bolts:
   - 005-tip-and-catalog-streamline
 enables_bolts:
@@ -48,6 +51,6 @@ Implement the strict 800-cigarette global weekly quota across all customer consi
 
 ## Stages
 
-- [ ] **1. Plan**: Pending → implementation-plan.md
-- [ ] **2. Implement**: Pending → api/_db.js, api/quota.js, api/orders.js, index.html
-- [ ] **3. Test**: Pending → test-walkthrough.md
+- [x] **1. Plan**: Completed → implementation-plan.md
+- [x] **2. Implement**: Completed → api/_db.js, api/quota.js, api/orders.js, index.html
+- [x] **3. Test**: Completed → test-walkthrough.md

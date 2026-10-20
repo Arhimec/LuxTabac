@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const ordersHandler = require('./api/orders.js');
+const quotaHandler = require('./api/quota.js');
 
 const PORT = process.env.PORT || 3000;
 
@@ -35,6 +36,11 @@ const server = http.createServer((req, res) => {
     // Parse URL
     const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     const pathname = parsedUrl.pathname;
+
+    // Route: /api/quota
+    if (pathname.startsWith('/api/quota')) {
+        return quotaHandler(req, res);
+    }
 
     // Route: /api/orders
     if (pathname.startsWith('/api/orders')) {

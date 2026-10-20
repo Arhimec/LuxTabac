@@ -337,6 +337,56 @@
         </div>
     </div>
 
+    <!-- Weekly Courier Quota Exceeded Blocking Modal -->
+    <div id="quota-exceeded-modal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
+        <div class="relative w-full max-w-md bg-zinc-900 border border-red-500/40 rounded-3xl p-6 shadow-2xl space-y-4 fade-in">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-400 text-xl font-bold shrink-0">
+                    ⚠️
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white">Weekly Courier Threshold Reached</h3>
+                    <p class="text-xs text-red-300 font-mono">Maximum 800 cigarettes per week</p>
+                </div>
+            </div>
+            <p class="text-xs text-zinc-300 leading-relaxed">
+                In compliance with EU cross-border transit regulations, our weekly collective courier capacity is strictly capped at <strong class="text-white">800 cigarettes</strong> across all consignments. Capacity resets on Monday at 00:00.
+            </p>
+            <div class="p-3.5 bg-black/50 border border-zinc-800 rounded-2xl space-y-2 text-xs font-mono">
+                <div class="flex justify-between text-zinc-400">
+                    <span>Weekly Limit:</span>
+                    <span class="text-white font-bold">800 cigs</span>
+                </div>
+                <div class="flex justify-between text-zinc-400">
+                    <span>Currently Booked:</span>
+                    <span id="modal-quota-booked" class="text-amber-400 font-bold">0 cigs</span>
+                </div>
+                <div class="flex justify-between text-zinc-400">
+                    <span>Available Remaining:</span>
+                    <span id="modal-quota-available" class="text-emerald-400 font-bold">800 cigs</span>
+                </div>
+                <div class="flex justify-between text-zinc-400">
+                    <span>Your Order Volume:</span>
+                    <span id="modal-quota-requested" class="text-red-400 font-bold">0 cigs</span>
+                </div>
+                <div class="pt-2 border-t border-zinc-800 flex justify-between text-zinc-400">
+                    <span>Next Reset:</span>
+                    <span id="modal-quota-reset" class="text-amber-300 font-semibold">Monday 00:00</span>
+                </div>
+            </div>
+            <p class="text-[11px] text-zinc-400 leading-normal">
+                Please reduce your carton/pack quantity to fit within the remaining weekly capacity, or return after Monday 00:00.
+            </p>
+            <div class="pt-2">
+                <button type="button" id="btn-close-quota-modal"
+                    class="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 text-xs font-bold transition shadow-lg shadow-amber-500/20">
+                    Adjust Basket Quantity
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Top Navigation / Header -->
     <header class="border-b border-zinc-800/80 bg-zinc-950/85 backdrop-blur-md sticky top-0 z-30">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
@@ -717,6 +767,33 @@
                             </div>
                             <span id="allowance-badge" class="text-[11px] font-mono text-emerald-400 shrink-0">Within
                                 800-cig limit</span>
+                        </div>
+
+                        <!-- Global Weekly Courier Capacity & Quota Meter (Resets Monday 00:00) -->
+                        <div id="weekly-quota-container" class="mt-3 p-3.5 bg-zinc-950/80 border border-zinc-800 rounded-2xl space-y-2">
+                            <div class="flex items-center justify-between text-xs">
+                                <div class="flex items-center gap-2">
+                                    <span id="quota-status-dot" class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                                    <span class="text-zinc-300 font-medium">Weekly Courier Capacity:</span>
+                                    <span class="font-mono text-white font-bold"><span id="quota-used-cigs">0</span> / 800 booked</span>
+                                </div>
+                                <span id="quota-capacity-badge" class="text-[11px] font-mono px-2 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
+                                    <span id="quota-remaining-cigs">800</span> remaining
+                                </span>
+                            </div>
+                            <!-- Progress Bar -->
+                            <div class="w-full h-2 bg-zinc-800/80 rounded-full overflow-hidden">
+                                <div id="quota-progress-bar" class="h-full bg-emerald-500 transition-all duration-500 rounded-full" style="width: 0%"></div>
+                            </div>
+                            <div class="flex items-center justify-between text-[11px] text-zinc-400">
+                                <span>Schedule: <strong class="text-amber-400/90 font-mono">Resets Monday 00:00</strong></span>
+                                <span class="text-zinc-400 font-mono">Combined limit across all buyers</span>
+                            </div>
+                            <!-- Inline Over-Quota Warning Alert (Shown when candidate order exceeds available quota) -->
+                            <div id="quota-inline-alert" class="hidden p-2.5 rounded-xl bg-red-950/60 border border-red-500/50 text-red-200 text-xs flex items-center gap-2">
+                                <span class="text-red-400 text-sm">⚠️</span>
+                                <span>Exceeds remaining weekly capacity (only <strong id="alert-quota-remaining">0</strong> cigarettes available this week). Ordering above limit is blocked until Monday 00:00.</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1368,6 +1445,32 @@
                 const allowanceText = document.getElementById('allowance-text');
                 const allowanceBadge = document.getElementById('allowance-badge');
 
+                // Weekly Quota Elements
+                const weeklyQuotaContainer = document.getElementById('weekly-quota-container');
+                const quotaStatusDot = document.getElementById('quota-status-dot');
+                const quotaUsedCigs = document.getElementById('quota-used-cigs');
+                const quotaRemainingCigs = document.getElementById('quota-remaining-cigs');
+                const quotaCapacityBadge = document.getElementById('quota-capacity-badge');
+                const quotaProgressBar = document.getElementById('quota-progress-bar');
+                const quotaInlineAlert = document.getElementById('quota-inline-alert');
+                const alertQuotaRemaining = document.getElementById('alert-quota-remaining');
+
+                // Quota Exceeded Blocking Modal Elements
+                const quotaExceededModal = document.getElementById('quota-exceeded-modal');
+                const modalQuotaBooked = document.getElementById('modal-quota-booked');
+                const modalQuotaAvailable = document.getElementById('modal-quota-available');
+                const modalQuotaRequested = document.getElementById('modal-quota-requested');
+                const modalQuotaReset = document.getElementById('modal-quota-reset');
+                const btnCloseQuotaModal = document.getElementById('btn-close-quota-modal');
+
+                let currentQuotaData = {
+                    weeklyLimit: 800,
+                    currentUsed: 0,
+                    remaining: 800,
+                    isFull: false,
+                    resetTimestamp: null
+                };
+
                 // Basket Section
                 const basketSection = document.getElementById('basket-section');
                 const basketCount = document.getElementById('basket-count');
@@ -1720,7 +1823,122 @@
                         allowanceBadge.textContent = 'Above 800-cig EU threshold';
                         allowanceBadge.className = 'text-[11px] font-mono text-amber-400 shrink-0';
                     }
+
+                    // Update Weekly Collective Courier Capacity Meter & Alert
+                    updateWeeklyQuotaUI(effectiveCigs);
                 }
+
+                /**
+                 * Update the visual progress bar, labels, and overflow warnings for the 800-cig weekly quota.
+                 */
+                function updateWeeklyQuotaUI(effectiveCigs) {
+                    if (!weeklyQuotaContainer) return;
+                    const used = currentQuotaData.currentUsed || 0;
+                    const limit = currentQuotaData.weeklyLimit || 800;
+                    const remaining = Math.max(0, limit - used);
+                    const percentage = Math.min(100, Math.round((used / limit) * 100));
+
+                    if (quotaUsedCigs) quotaUsedCigs.textContent = used;
+                    if (quotaRemainingCigs) quotaRemainingCigs.textContent = remaining;
+
+                    if (quotaProgressBar) {
+                        quotaProgressBar.style.width = `${percentage}%`;
+                        if (used >= limit) {
+                            quotaProgressBar.className = 'h-full bg-red-500 transition-all duration-500 rounded-full';
+                        } else if (used >= 600) {
+                            quotaProgressBar.className = 'h-full bg-amber-500 transition-all duration-500 rounded-full';
+                        } else {
+                            quotaProgressBar.className = 'h-full bg-emerald-500 transition-all duration-500 rounded-full';
+                        }
+                    }
+
+                    if (quotaStatusDot) {
+                        if (used >= limit) {
+                            quotaStatusDot.className = 'w-2 h-2 rounded-full bg-red-400 shrink-0';
+                        } else if (used >= 600) {
+                            quotaStatusDot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0';
+                        } else {
+                            quotaStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 shrink-0';
+                        }
+                    }
+
+                    if (quotaCapacityBadge) {
+                        if (used >= limit) {
+                            quotaCapacityBadge.className = 'text-[11px] font-mono px-2 py-0.5 rounded-full border border-red-500/30 bg-red-500/10 text-red-400';
+                            quotaCapacityBadge.innerHTML = 'Fully Booked';
+                        } else if (used >= 600) {
+                            quotaCapacityBadge.className = 'text-[11px] font-mono px-2 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400';
+                            quotaCapacityBadge.innerHTML = `<span id="quota-remaining-cigs">${remaining}</span> remaining (Filling Fast)`;
+                        } else {
+                            quotaCapacityBadge.className = 'text-[11px] font-mono px-2 py-0.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400';
+                            quotaCapacityBadge.innerHTML = `<span id="quota-remaining-cigs">${remaining}</span> remaining`;
+                        }
+                    }
+
+                    // Check if current order volume exceeds remaining capacity
+                    if (quotaInlineAlert) {
+                        if (remaining <= 0 || effectiveCigs > remaining) {
+                            if (alertQuotaRemaining) alertQuotaRemaining.textContent = remaining;
+                            quotaInlineAlert.classList.remove('hidden');
+                        } else {
+                            quotaInlineAlert.classList.add('hidden');
+                        }
+                    }
+                }
+
+                function showQuotaExceededModal(booked, available, requested, resetTime) {
+                    if (modalQuotaBooked) modalQuotaBooked.textContent = `${booked || 0} cigs`;
+                    if (modalQuotaAvailable) modalQuotaAvailable.textContent = `${available || 0} cigs`;
+                    if (modalQuotaRequested) modalQuotaRequested.textContent = `${requested || 0} cigs`;
+                    if (modalQuotaReset) {
+                        if (resetTime) {
+                            try {
+                                const d = new Date(resetTime);
+                                modalQuotaReset.textContent = `Monday 00:00 (${d.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' })})`;
+                            } catch {
+                                modalQuotaReset.textContent = 'Monday at 00:00';
+                            }
+                        } else {
+                            modalQuotaReset.textContent = 'Monday at 00:00';
+                        }
+                    }
+                    if (quotaExceededModal) {
+                        quotaExceededModal.classList.remove('hidden');
+                        quotaExceededModal.classList.add('flex');
+                    }
+                }
+
+                function closeQuotaExceededModal() {
+                    if (quotaExceededModal) {
+                        quotaExceededModal.classList.remove('flex');
+                        quotaExceededModal.classList.add('hidden');
+                    }
+                }
+
+                async function fetchQuotaStatus() {
+                    try {
+                        const response = await fetch('/api/quota');
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success) {
+                                currentQuotaData = {
+                                    weeklyLimit: data.weeklyLimit || 800,
+                                    currentUsed: Number(data.currentUsed) || 0,
+                                    remaining: typeof data.remaining !== 'undefined' ? Number(data.remaining) : Math.max(0, 800 - (Number(data.currentUsed) || 0)),
+                                    isFull: Boolean(data.isFull),
+                                    resetTimestamp: data.resetTimestamp
+                                };
+                                const effectiveCigs = orderBasket.length > 0
+                                    ? orderBasket.reduce((sum, it) => sum + (it.totalCigs || 0), 0)
+                                    : (getCurrentConfiguredItem() ? getCurrentConfiguredItem().totalCigs : 200);
+                                updateWeeklyQuotaUI(effectiveCigs);
+                            }
+                        }
+                    } catch (err) {
+                        console.warn('Could not fetch /api/quota (offline mode?):', err);
+                    }
+                }
+
 
                 // =========================================================================
                 // 7. MULTI-ITEM ORDER BASKET MANAGEMENT
@@ -2138,7 +2356,7 @@
                 });
 
                 // Submit Order & Generate Revolut QR
-                orderForm.addEventListener('submit', (e) => {
+                orderForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     formErrorBox.classList.add('hidden');
 
@@ -2163,6 +2381,19 @@
                         finalItems = [getCurrentConfiguredItem()];
                     }
 
+                    const candidateCigs = finalItems.reduce((acc, it) => acc + (it.totalCigs || 0), 0);
+
+                    // Enforce weekly quota check client-side
+                    if (currentQuotaData.remaining <= 0 || candidateCigs > currentQuotaData.remaining) {
+                        showQuotaExceededModal(
+                            currentQuotaData.currentUsed,
+                            currentQuotaData.remaining,
+                            candidateCigs,
+                            currentQuotaData.resetTimestamp
+                        );
+                        return;
+                    }
+
                     const subtotal = finalItems.reduce((sum, it) => sum + it.subtotal, 0);
                     const tipAmount = calculateTip(subtotal, currentTipMode);
                     const grandTotal = subtotal + tipAmount;
@@ -2173,6 +2404,36 @@
                         : `${finalItems.length} items (${finalItems[0].brand}...)`;
 
                     const revolutReference = `${orderCode} | ${name.split(' ')[0]} - ${firstItemSummary}`;
+
+                    // Persist order into SQLite database via /api/orders
+                    const orderPayload = {
+                        orderCode,
+                        customerName: name,
+                        deliveryDate: '',
+                        deliveryNotes: '',
+                        items: finalItems,
+                        tipAmount,
+                        grandTotal,
+                        revolutReference,
+                        totalCigs: candidateCigs
+                    };
+
+                    const saveResult = await saveOrderToBackend(orderPayload);
+                    if (!saveResult.success) {
+                        if (saveResult.quotaExceeded) {
+                            showQuotaExceededModal(
+                                saveResult.currentUsed,
+                                saveResult.available,
+                                saveResult.requested,
+                                currentQuotaData.resetTimestamp
+                            );
+                            fetchQuotaStatus();
+                            return;
+                        }
+                        formErrorText.textContent = saveResult.message || 'Error submitting order.';
+                        formErrorBox.classList.remove('hidden');
+                        return;
+                    }
 
                     // Populate Summary View
                     summaryOrderId.textContent = `#${orderCode}`;
@@ -2220,20 +2481,6 @@
                     if (btnShareWhatsapp) {
                         btnShareWhatsapp.href = `https://wa.me/?text=${encodeURIComponent(currentOrderManifest)}`;
                     }
-
-                    // Asynchronously persist order into SQLite database via /api/orders
-                    const orderPayload = {
-                        orderCode,
-                        customerName: name,
-                        deliveryDate: '',
-                        deliveryNotes: '',
-                        items: finalItems,
-                        tipAmount,
-                        grandTotal,
-                        revolutReference,
-                        totalCigs: finalItems.reduce((acc, it) => acc + (it.totalCigs || 0), 0)
-                    };
-                    saveOrderToBackend(orderPayload);
 
                     // Switch to Payment View
                     paymentConfirmedBox.classList.add('hidden');
@@ -2316,12 +2563,30 @@
                             body: JSON.stringify(orderPayload)
                         });
                         const data = await response.json();
+                        if (!response.ok) {
+                            if (data.error === 'WEEKLY_QUOTA_EXCEEDED') {
+                                return {
+                                    success: false,
+                                    quotaExceeded: true,
+                                    currentUsed: data.currentUsed,
+                                    available: data.available,
+                                    requested: data.requested
+                                };
+                            }
+                            return {
+                                success: false,
+                                message: data.message || data.error || 'Server rejected order.'
+                            };
+                        }
                         if (data.success && data.order) {
                             cachedHistoryOrders.unshift(data.order);
                             updateHistoryBadgeCount(cachedHistoryOrders.length);
+                            fetchQuotaStatus();
                         }
+                        return { success: true, order: data.order };
                     } catch (err) {
                         console.warn('Could not persist order to /api/orders (running offline?):', err);
+                        return { success: true, offline: true };
                     }
                 }
 
@@ -2596,6 +2861,15 @@ ${escapeHTML(activeReceiptText)}
                     });
                 }
 
+                if (btnCloseQuotaModal) {
+                    btnCloseQuotaModal.addEventListener('click', closeQuotaExceededModal);
+                }
+                if (quotaExceededModal) {
+                    quotaExceededModal.addEventListener('click', (e) => {
+                        if (e.target === quotaExceededModal) closeQuotaExceededModal();
+                    });
+                }
+
                 // =========================================================================
                 // 11. INITIALIZATION & AGE ENFORCEMENT
                 // =========================================================================
@@ -2609,6 +2883,7 @@ ${escapeHTML(activeReceiptText)}
                 populateCatalogDropdown();
                 updateCalculationAndUI();
                 loadHistoryFromApi();
+                fetchQuotaStatus();
             })();
     </script>
 </body>

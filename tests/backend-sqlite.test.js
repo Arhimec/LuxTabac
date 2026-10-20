@@ -57,6 +57,7 @@ test('SQLite Database Module Tests', async (t) => {
 });
 
 test('Serverless /api/orders Handler Tests', async (t) => {
+    db.getDb().exec('DELETE FROM orders;');
     function createMockRes() {
         return {
             statusCode: 200,

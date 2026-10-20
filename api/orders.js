@@ -1,4 +1,4 @@
-const { insertOrder, getRecentOrders, getOrderByCode } = require('./_db.js');
+const { insertOrder, getRecentOrders, getOrderByCode, getWeeklyCigaretteTotal } = require('./_db.js');
 
 /**
  * Helper to ensure req.body is parsed as an object.
@@ -65,6 +65,30 @@ module.exports = async function handler(req, res) {
                 });
             }
 
+            // Calculate candidate order total cigarettes
+            const candidateCigs = typeof body.totalCigs !== 'undefined'
+                ? Number(body.totalCigs)
+                : body.items.reduce((sum, item) => {
+                    const itemCigs = typeof item.cigs !== 'undefined'
+                        ? Number(item.cigs)
+                        : (item.format === 'carton' ? 200 : 20) * (Number(item.quantity) || 1);
+                    return sum + itemCigs;
+                }, 0);
+
+            // Enforce weekly quota (800 cigarettes per calendar week across all consignments)
+            const currentWeeklyUsed = getWeeklyCigaretteTotal();
+            if (currentWeeklyUsed + candidateCigs > 800) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'WEEKLY_QUOTA_EXCEEDED',
+                    message: 'Weekly Luxembourg courier quota (800 cigarettes) exceeded for this week.',
+                    weeklyLimit: 800,
+                    currentUsed: currentWeeklyUsed,
+                    available: Math.max(0, 800 - currentWeeklyUsed),
+                    requested: candidateCigs
+                });
+            }
+
             const createdOrder = insertOrder({
                 orderCode: body.orderCode,
                 customerName: body.customerName,
@@ -74,7 +98,7 @@ module.exports = async function handler(req, res) {
                 grandTotal: body.grandTotal,
                 tipAmount: body.tipAmount,
                 revolutReference: body.revolutReference,
-                totalCigs: body.totalCigs
+                totalCigs: candidateCigs
             });
 
             return res.status(201).json({

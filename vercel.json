@@ -11,6 +11,14 @@
       "dest": "/api/orders.js"
     },
     {
+      "src": "/api/quota",
+      "dest": "/api/quota.js"
+    },
+    {
+      "src": "/api/quota/(.*)",
+      "dest": "/api/quota.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }

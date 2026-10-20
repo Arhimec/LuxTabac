@@ -179,10 +179,71 @@ function getOrderByCode(orderCode) {
     };
 }
 
+/**
+ * Calculate the start of the current calendar week (Monday at 00:00:00).
+ */
+function getWeekStartMonday(refDate = new Date()) {
+    const d = new Date(refDate);
+    const day = d.getDay(); // 0 = Sun, 1 = Mon, ..., 6 = Sat
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    d.setDate(diff);
+    d.setHours(0, 0, 0, 0);
+    return d;
+}
+
+/**
+ * Calculate the next Monday at 00:00:00 when the weekly quota resets.
+ */
+function getNextMonday(refDate = new Date()) {
+    const monday = getWeekStartMonday(refDate);
+    const next = new Date(monday);
+    next.setDate(next.getDate() + 7);
+    next.setHours(0, 0, 0, 0);
+    return next;
+}
+
+/**
+ * Query the total cigarettes booked in orders since the current week's Monday at 00:00:00.
+ */
+function getWeeklyCigaretteTotal(refDate = new Date()) {
+    const db = getDb();
+    const monday = getWeekStartMonday(refDate);
+    const sinceSqlite = monday.toISOString().replace('T', ' ').substring(0, 19);
+    const stmt = db.prepare(`
+        SELECT COALESCE(SUM(total_cigs), 0) AS total_used
+        FROM orders
+        WHERE datetime(created_at) >= datetime(?)
+    `);
+    const row = stmt.get(sinceSqlite);
+    return row ? Number(row.total_used) : 0;
+}
+
+/**
+ * Retrieve comprehensive weekly quota status and allowance telemetry.
+ */
+function getQuotaStatus(refDate = new Date()) {
+    const weeklyLimit = 800;
+    const currentUsed = getWeeklyCigaretteTotal(refDate);
+    const remaining = Math.max(0, weeklyLimit - currentUsed);
+    const resetTimestamp = getNextMonday(refDate).toISOString();
+    return {
+        weeklyLimit,
+        currentUsed,
+        remaining,
+        resetTimestamp,
+        isFull: currentUsed >= weeklyLimit
+    };
+}
+
 module.exports = {
     getDb,
     getDatabasePath,
     insertOrder,
     getRecentOrders,
-    getOrderByCode
+    getOrderByCode,
+    getWeekStartMonday,
+    getNextMonday,
+    getWeeklyCigaretteTotal,
+    getQuotaStatus
 };
+
