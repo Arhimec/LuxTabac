@@ -496,12 +496,26 @@
 
                     <!-- Row 1: Customer Name -->
                     <div>
-                        <label for="customer-name"
-                            class="block text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-2">
-                            Full Name <span class="text-amber-500">*</span>
-                        </label>
+                        <div class="flex items-center justify-between mb-2">
+                            <label for="customer-name"
+                                class="block text-xs font-semibold uppercase tracking-wider text-zinc-300">
+                                Full Name <span class="text-amber-500">*</span>
+                            </label>
+                            <span id="name-lookup-status" class="hidden text-[10px] text-zinc-500 font-mono">⚡ Returning Buyer</span>
+                        </div>
                         <input type="text" id="customer-name" required placeholder="e.g., Jean-Luc Schmit"
                             class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 rounded-xl px-4 py-3.5 text-white placeholder-zinc-600 text-sm outline-none transition">
+
+                        <!-- Name Reorder Pre-filter Suggestion Prompt -->
+                        <div id="name-reorder-container" class="hidden mt-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-3 text-xs fade-in">
+                            <div class="flex items-center gap-2 truncate text-zinc-300">
+                                <span class="text-amber-400 text-sm">⚡</span>
+                                <span class="truncate">Order history match: <strong id="reorder-item-label" class="text-white font-semibold">Marlboro Gold (Carton)</strong></span>
+                            </div>
+                            <button type="button" id="btn-apply-reorder" class="px-3 py-1.5 rounded-lg bg-amber-500 text-zinc-950 text-xs font-bold hover:bg-amber-400 transition shrink-0 shadow-sm shadow-amber-500/20">
+                                Quick Reorder
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Product Selection Panel -->
@@ -745,15 +759,12 @@
                             </div>
                             <span id="tip-amount-display" class="text-xs font-mono font-bold text-amber-400">+€0.00</span>
                         </div>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="tip-chips-container">
+                        <div class="grid grid-cols-3 gap-2" id="tip-chips-container">
                             <button type="button" data-tip="none" class="tip-chip active py-2.5 px-3 rounded-xl border text-xs font-semibold text-center transition bg-amber-500 text-zinc-950 border-amber-500 shadow-sm shadow-amber-500/20">
                                 No tip
                             </button>
                             <button type="button" data-tip="round-5" class="tip-chip py-2.5 px-3 rounded-xl border text-xs font-semibold text-center transition bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border-zinc-700/80">
-                                Round 5€
-                            </button>
-                            <button type="button" data-tip="round-10" class="tip-chip py-2.5 px-3 rounded-xl border text-xs font-semibold text-center transition bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border-zinc-700/80">
-                                Round 10€
+                                Round Up
                             </button>
                             <button type="button" data-tip="percent-5" class="tip-chip py-2.5 px-3 rounded-xl border text-xs font-semibold text-center transition bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border-zinc-700/80">
                                 5% Tip
@@ -1125,6 +1136,8 @@
                         items: [
                             { id: "marlboro-red-20", brand: "Marlboro", model: "Red (10x20)", packPrice: 7.70, cartonPrice: 77.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "marlboro-gold-20", brand: "Marlboro", model: "Gold (10x20)", packPrice: 7.70, cartonPrice: 77.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "marlboro-silver-20", brand: "Marlboro", model: "Silver Blue (10x20)", packPrice: 7.70, cartonPrice: 77.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "marlboro-white-mint-20", brand: "Marlboro", model: "White Mint (10x20)", packPrice: 7.70, cartonPrice: 77.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "marlboro-100s-20", brand: "Marlboro", model: "Red / Gold 100s (10x20)", packPrice: 7.80, cartonPrice: 78.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "marlboro-crafted-red", brand: "Marlboro", model: "Crafted Red (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "marlboro-crafted-gold", brand: "Marlboro", model: "Crafted Gold (10x20)", packPrice: 6.20, cartonPrice: 62.00, packsPerCarton: 10, cigsPerPack: 20 },
@@ -1137,28 +1150,35 @@
                         items: [
                             { id: "camel-yellow-20", brand: "Camel", model: "Filters / Yellow (10x20)", packPrice: 7.10, cartonPrice: 71.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "camel-blue-20", brand: "Camel", model: "Blue (10x20)", packPrice: 7.10, cartonPrice: 71.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "camel-essential-red-20", brand: "Camel", model: "Essential / Natural Red (10x20)", packPrice: 7.10, cartonPrice: 71.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "camel-essential-blue-20", brand: "Camel", model: "Essential / Natural Blue (10x20)", packPrice: 7.10, cartonPrice: 71.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "camel-activate-20", brand: "Camel", model: "Activate / White (10x20)", packPrice: 7.10, cartonPrice: 71.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "camel-natural-20", brand: "Camel", model: "Natural Red / Blue (10x20)", packPrice: 7.10, cartonPrice: 71.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "camel-100s-20", brand: "Camel", model: "Filters 100s (10x20)", packPrice: 7.40, cartonPrice: 74.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "camel-compact-20", brand: "Camel", model: "Compact Blue (10x20)", packPrice: 6.80, cartonPrice: 68.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "camel-big-50", brand: "Camel", model: "Blue / Yellow Big (4x50)", packPrice: 16.00, cartonPrice: 64.00, packsPerCarton: 4, cigsPerPack: 50 }
                         ]
                     },
                     {
                         category: "Lucky Strike",
                         items: [
-                            { id: "lucky-red-20", brand: "Lucky Strike", model: "Red (10x20)", packPrice: 6.80, cartonPrice: 68.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "lucky-red-20", brand: "Lucky Strike", model: "Original Red (10x20)", packPrice: 6.80, cartonPrice: 68.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "lucky-blue-20", brand: "Lucky Strike", model: "Blue (10x20)", packPrice: 6.90, cartonPrice: 69.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "lucky-auth-20", brand: "Lucky Strike", model: "Authentic Red / Blue (10x20)", packPrice: 7.10, cartonPrice: 71.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "lucky-amber-20", brand: "Lucky Strike", model: "Amber (10x20)", packPrice: 6.80, cartonPrice: 68.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "lucky-auth-red-20", brand: "Lucky Strike", model: "Authentic Red (Additive Free) (10x20)", packPrice: 7.10, cartonPrice: 71.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "lucky-auth-blue-20", brand: "Lucky Strike", model: "Authentic Blue (Additive Free) (10x20)", packPrice: 7.10, cartonPrice: 71.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "lucky-ice-20", brand: "Lucky Strike", model: "Ice / Green (10x20)", packPrice: 6.90, cartonPrice: 69.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "lucky-red-25", brand: "Lucky Strike", model: "Red (8x25)", packPrice: 8.50, cartonPrice: 68.00, packsPerCarton: 8, cigsPerPack: 25 }
+                            { id: "lucky-red-25", brand: "Lucky Strike", model: "Original Red (8x25)", packPrice: 8.50, cartonPrice: 68.00, packsPerCarton: 8, cigsPerPack: 25 }
                         ]
                     },
                     {
                         category: "Winston",
                         items: [
                             { id: "winston-red-20", brand: "Winston", model: "Classic Red (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "winston-blue-20", brand: "Winston", model: "Blue / S-Line (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "winston-blue-20", brand: "Winston", model: "Blue (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "winston-silver-20", brand: "Winston", model: "Silver (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "winston-white-20", brand: "Winston", model: "White (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "winston-expand-20", brand: "Winston", model: "Expand (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "winston-sline-20", brand: "Winston", model: "S-Line Blue (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "winston-25", brand: "Winston", model: "Classic / Blue (8x25)", packPrice: 8.10, cartonPrice: 64.80, packsPerCarton: 8, cigsPerPack: 25 },
                             { id: "winston-30", brand: "Winston", model: "Classic / Blue (8x30)", packPrice: 9.80, cartonPrice: 78.40, packsPerCarton: 8, cigsPerPack: 30 }
                         ]
@@ -1166,49 +1186,86 @@
                     {
                         category: "Gauloises & Gitanes",
                         items: [
-                            { id: "gauloises-blue-20", brand: "Gauloises", model: "Blondes Blue (10x20)", packPrice: 7.00, cartonPrice: 70.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "gauloises-red-20", brand: "Gauloises", model: "Blondes Red (10x20)", packPrice: 6.70, cartonPrice: 67.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "gauloises-blue-20", brand: "Gauloises", model: "Blondes Bleues (10x20)", packPrice: 7.00, cartonPrice: 70.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "gauloises-red-20", brand: "Gauloises", model: "Blondes Rouges (10x20)", packPrice: 6.70, cartonPrice: 67.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "gauloises-jaune-20", brand: "Gauloises", model: "Blondes Jaune (10x20)", packPrice: 6.70, cartonPrice: 67.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "gauloises-free-20", brand: "Gauloises", model: "Additive Free Red (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "gauloises-brunes-20", brand: "Gauloises", model: "Brunes Filtre (10x20)", packPrice: 8.50, cartonPrice: 85.00, packsPerCarton: 10, cigsPerPack: 20 },
                             { id: "gitanes-filtre-20", brand: "Gitanes", model: "Filtre (10x20)", packPrice: 8.50, cartonPrice: 85.00, packsPerCarton: 10, cigsPerPack: 20 }
                         ]
                     },
                     {
-                        category: "L&M, Chesterfield & Pall Mall",
+                        category: "Chesterfield & Philip Morris",
                         items: [
-                            { id: "lm-20", brand: "L&M", model: "Red / Blue Label (10x20)", packPrice: 6.70, cartonPrice: 67.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "lm-25", brand: "L&M", model: "Red / Blue Label (8x25)", packPrice: 8.30, cartonPrice: 66.40, packsPerCarton: 8, cigsPerPack: 25 },
-                            { id: "chesterfield-20", brand: "Chesterfield", model: "Orange / Original (10x20)", packPrice: 6.70, cartonPrice: 67.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "chesterfield-25", brand: "Chesterfield", model: "Blue (8x25)", packPrice: 7.90, cartonPrice: 63.20, packsPerCarton: 8, cigsPerPack: 25 },
-                            { id: "pallmall-20", brand: "Pall Mall", model: "Red (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "pallmall-25", brand: "Pall Mall", model: "Red / Additive Free (8x25)", packPrice: 7.60, cartonPrice: 60.80, packsPerCarton: 8, cigsPerPack: 25 }
+                            { id: "chesterfield-red-20", brand: "Chesterfield", model: "Original Red (10x20)", packPrice: 6.70, cartonPrice: 67.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "chesterfield-blue-20", brand: "Chesterfield", model: "Blue (10x20)", packPrice: 6.70, cartonPrice: 67.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "chesterfield-orange-20", brand: "Chesterfield", model: "Orange (10x20)", packPrice: 6.70, cartonPrice: 67.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "chesterfield-25", brand: "Chesterfield", model: "Blue / Red (8x25)", packPrice: 7.90, cartonPrice: 63.20, packsPerCarton: 8, cigsPerPack: 25 },
+                            { id: "pm-red-20", brand: "Philip Morris", model: "Red (10x20)", packPrice: 6.80, cartonPrice: 68.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "pm-blue-20", brand: "Philip Morris", model: "Blue (10x20)", packPrice: 6.80, cartonPrice: 68.00, packsPerCarton: 10, cigsPerPack: 20 }
                         ]
                     },
                     {
-                        category: "Local Luxembourg & International Brands",
+                        category: "Dunhill, Kent & Vogue",
                         items: [
-                            { id: "ducal-30", brand: "Ducal", model: "Red / Blue / Gold (8x30)", packPrice: 8.30, cartonPrice: 66.40, packsPerCarton: 8, cigsPerPack: 30 },
-                            { id: "ducal-25", brand: "Ducal", model: "Red (8x25)", packPrice: 7.10, cartonPrice: 56.80, packsPerCarton: 8, cigsPerPack: 25 },
-                            { id: "elixyr-20", brand: "Elixyr", model: "Red / Duo / Plus (10x20)", packPrice: 6.10, cartonPrice: 61.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "austin-20", brand: "Austin", model: "Red (10x20)", packPrice: 5.70, cartonPrice: 57.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "che-20", brand: "Che", model: "Red / Blanco (10x20)", packPrice: 6.30, cartonPrice: 63.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "news-20", brand: "News", model: "Red / Fresh (10x20)", packPrice: 6.20, cartonPrice: 62.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "west-20", brand: "West", model: "Red (10x20)", packPrice: 6.00, cartonPrice: 60.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "bh-gold-20", brand: "Benson & Hedges", model: "Gold (10x20)", packPrice: 7.80, cartonPrice: 78.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "davidoff-20", brand: "Davidoff", model: "Classic / Gold (10x20)", packPrice: 7.90, cartonPrice: 79.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "dunhill-20", brand: "Dunhill", model: "International Red (10x20)", packPrice: 8.80, cartonPrice: 88.00, packsPerCarton: 10, cigsPerPack: 20 },
-                            { id: "mademoiselle-20", brand: "Mademoiselle", model: "Blanche / Bleue / Rose (10x20)", packPrice: 5.90, cartonPrice: 59.00, packsPerCarton: 10, cigsPerPack: 20 }
+                            { id: "dunhill-red-20", brand: "Dunhill", model: "International Red (10x20)", packPrice: 8.80, cartonPrice: 88.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "dunhill-blue-20", brand: "Dunhill", model: "International Blue (10x20)", packPrice: 8.80, cartonPrice: 88.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "kent-blue-20", brand: "Kent", model: "Core Blue (10x20)", packPrice: 7.20, cartonPrice: 72.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "kent-silver-20", brand: "Kent", model: "Core Silver (10x20)", packPrice: 7.20, cartonPrice: 72.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "kent-white-20", brand: "Kent", model: "Core White (10x20)", packPrice: 7.20, cartonPrice: 72.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "vogue-bleue-20", brand: "Vogue", model: "Bleue Super Slims (10x20)", packPrice: 7.90, cartonPrice: 79.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "vogue-lilas-20", brand: "Vogue", model: "Lilas Super Slims (10x20)", packPrice: 7.90, cartonPrice: 79.00, packsPerCarton: 10, cigsPerPack: 20 }
                         ]
                     },
                     {
-                        category: "Rolling & Tubing Tobacco (Pots / Buckets)",
+                        category: "Davidoff & Benson & Hedges",
                         items: [
-                            { id: "tob-marlboro-150g", brand: "Marlboro", model: "Fine Cut Red / Gold (150g Pot)", packPrice: 24.00, cartonPrice: 24.00, packsPerCarton: 1, cigsPerPack: 200, isPot: true },
-                            { id: "tob-marlboro-500g", brand: "Marlboro", model: "Volume Tobacco (500g Mega Box)", packPrice: 78.00, cartonPrice: 78.00, packsPerCarton: 1, cigsPerPack: 650, isPot: true },
-                            { id: "tob-camel-300g", brand: "Camel", model: "Hand Rolling Yellow (10x30g Carton)", packPrice: 5.80, cartonPrice: 58.00, packsPerCarton: 10, cigsPerPack: 40 },
-                            { id: "tob-lucky-175g", brand: "Lucky Strike", model: "Volume Tobacco (175g Pot)", packPrice: 27.00, cartonPrice: 27.00, packsPerCarton: 1, cigsPerPack: 230, isPot: true },
-                            { id: "tob-winston-175g", brand: "Winston", model: "Expert Red / Blue (175g Pot)", packPrice: 29.20, cartonPrice: 29.20, packsPerCarton: 1, cigsPerPack: 230, isPot: true },
-                            { id: "tob-ducal-200g", brand: "Ducal", model: "Original Red / Blue / Gold (200g)", packPrice: 29.00, cartonPrice: 29.00, packsPerCarton: 1, cigsPerPack: 260, isPot: true }
+                            { id: "davidoff-classic-20", brand: "Davidoff", model: "Classic (10x20)", packPrice: 7.90, cartonPrice: 79.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "davidoff-gold-20", brand: "Davidoff", model: "Gold (10x20)", packPrice: 7.90, cartonPrice: 79.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "davidoff-magnum-20", brand: "Davidoff", model: "Magnum (10x20)", packPrice: 8.90, cartonPrice: 89.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "bh-gold-20", brand: "Benson & Hedges", model: "Special Filter Gold (10x20)", packPrice: 7.80, cartonPrice: 78.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "bh-silver-20", brand: "Benson & Hedges", model: "Silver (10x20)", packPrice: 7.60, cartonPrice: 76.00, packsPerCarton: 10, cigsPerPack: 20 }
+                        ]
+                    },
+                    {
+                        category: "Pall Mall & L&M",
+                        items: [
+                            { id: "pallmall-red-20", brand: "Pall Mall", model: "Red (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "pallmall-blue-20", brand: "Pall Mall", model: "Blue (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "pallmall-auth-20", brand: "Pall Mall", model: "Authentic Additive Free (10x20)", packPrice: 6.70, cartonPrice: 67.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "pallmall-25", brand: "Pall Mall", model: "Red (8x25)", packPrice: 7.60, cartonPrice: 60.80, packsPerCarton: 8, cigsPerPack: 25 },
+                            { id: "lm-red-20", brand: "L&M", model: "Red Label (10x20)", packPrice: 6.70, cartonPrice: 67.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "lm-blue-20", brand: "L&M", model: "Blue Label (10x20)", packPrice: 6.70, cartonPrice: 67.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "lm-25", brand: "L&M", model: "Red / Blue Label (8x25)", packPrice: 8.30, cartonPrice: 66.40, packsPerCarton: 8, cigsPerPack: 25 }
+                        ]
+                    },
+                    {
+                        category: "John Player Special (JPS) & Peter Stuyvesant",
+                        items: [
+                            { id: "jps-red-20", brand: "JPS", model: "Red (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "jps-black-20", brand: "JPS", model: "Black (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "jps-blue-20", brand: "JPS", model: "Blue Stream (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "stuyvesant-red-20", brand: "Peter Stuyvesant", model: "Red (10x20)", packPrice: 7.30, cartonPrice: 73.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "stuyvesant-blue-20", brand: "Peter Stuyvesant", model: "Blue (10x20)", packPrice: 7.30, cartonPrice: 73.00, packsPerCarton: 10, cigsPerPack: 20 }
+                        ]
+                    },
+                    {
+                        category: "Fortuna, Ducados, News & Local Favorites",
+                        items: [
+                            { id: "fortuna-rouge-20", brand: "Fortuna", model: "Rouge (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "fortuna-bleue-20", brand: "Fortuna", model: "Bleue (10x20)", packPrice: 6.50, cartonPrice: 65.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "ducados-rubio-20", brand: "Ducados", model: "Rubio (10x20)", packPrice: 6.20, cartonPrice: 62.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "ducados-negro-20", brand: "Ducados", model: "Negro (10x20)", packPrice: 6.60, cartonPrice: 66.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "news-red-20", brand: "News", model: "Red (10x20)", packPrice: 6.20, cartonPrice: 62.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "news-blue-20", brand: "News", model: "Blue / Fresh (10x20)", packPrice: 6.20, cartonPrice: 62.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "ducal-red-20", brand: "Ducal", model: "Red (10x20)", packPrice: 6.00, cartonPrice: 60.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "ducal-blue-20", brand: "Ducal", model: "Blue (10x20)", packPrice: 6.00, cartonPrice: 60.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "ducal-30", brand: "Ducal", model: "Red / Blue (8x30)", packPrice: 8.30, cartonPrice: 66.40, packsPerCarton: 8, cigsPerPack: 30 },
+                            { id: "elixyr-red-20", brand: "Elixyr", model: "Red / Duo (10x20)", packPrice: 6.10, cartonPrice: 61.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "che-red-20", brand: "Che", model: "Red Additive Free (10x20)", packPrice: 6.30, cartonPrice: 63.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "austin-red-20", brand: "Austin", model: "Red (10x20)", packPrice: 5.70, cartonPrice: 57.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "west-red-20", brand: "West", model: "Red (10x20)", packPrice: 6.00, cartonPrice: 60.00, packsPerCarton: 10, cigsPerPack: 20 },
+                            { id: "mademoiselle-20", brand: "Mademoiselle", model: "Blanche / Rose (10x20)", packPrice: 5.90, cartonPrice: 59.00, packsPerCarton: 10, cigsPerPack: 20 }
                         ]
                     }
                 ];
@@ -1228,7 +1285,9 @@
                 let selectedUnitFormat = 'carton'; // 'carton' or 'pack'
                 let merchantRevtag = 'vladimtul';
                 let orderBasket = []; // Array of multi-item objects
-                let currentTipMode = 'none'; // 'none', 'round-5', 'round-10', 'percent-5'
+                let currentTipMode = 'none'; // 'none', 'round-5', 'percent-5'
+                let cachedHistoryOrders = []; // Cached orders loaded from backend/localStorage
+                let matchedPreviousItem = null; // Stored previous brand choice for buyer
 
                 // =========================================================================
                 // 3. DOM ELEMENTS
@@ -1264,6 +1323,10 @@
                 // Form Elements
                 const orderForm = document.getElementById('cigarette-order-form');
                 const customerNameInput = document.getElementById('customer-name');
+                const nameLookupStatus = document.getElementById('name-lookup-status');
+                const nameReorderContainer = document.getElementById('name-reorder-container');
+                const reorderItemLabel = document.getElementById('reorder-item-label');
+                const btnApplyReorder = document.getElementById('btn-apply-reorder');
                 const tipChips = document.querySelectorAll('.tip-chip');
                 const tipAmountDisplay = document.getElementById('tip-amount-display');
                 const basketTipSubtext = document.getElementById('basket-tip-subtext');
@@ -1737,13 +1800,9 @@
                         if (remainder === 0) return 5.00;
                         return Math.round((5 - remainder) * 100) / 100;
                     }
-                    if (mode === 'round-10') {
-                        const remainder = subtotal % 10;
-                        if (remainder === 0) return 10.00;
-                        return Math.round((10 - remainder) * 100) / 100;
-                    }
                     if (mode === 'percent-5') {
-                        return Math.round(subtotal * 0.05 * 100) / 100;
+                        // User requirement: 5% tip rounded-down as well to nearest 1 EUR
+                        return Math.floor(subtotal * 0.05);
                     }
                     return 0;
                 }
@@ -1972,6 +2031,9 @@
                     }
 
                     customerNameInput.value = '';
+                    if (nameReorderContainer) nameReorderContainer.classList.add('hidden');
+                    if (nameLookupStatus) nameLookupStatus.classList.add('hidden');
+                    matchedPreviousItem = null;
                     orderBasket = [];
                     currentTipMode = 'none';
                     tipChips.forEach(c => {
@@ -1990,6 +2052,75 @@
 
                 if (btnHeaderHome) btnHeaderHome.addEventListener('click', handleNavigateHome);
                 if (headerBrandLink) headerBrandLink.addEventListener('click', handleNavigateHome);
+
+                // Returning Buyer Auto-Detection & Reorder Pre-filtering
+                function checkReturningBuyerName() {
+                    const rawName = (customerNameInput.value || '').trim().toLowerCase();
+                    if (rawName.length < 2) {
+                        if (nameReorderContainer) nameReorderContainer.classList.add('hidden');
+                        if (nameLookupStatus) nameLookupStatus.classList.add('hidden');
+                        matchedPreviousItem = null;
+                        return;
+                    }
+
+                    // Look through cachedHistoryOrders
+                    const foundOrder = (cachedHistoryOrders || []).find(ord => {
+                        const cust = (ord.customerName || '').trim().toLowerCase();
+                        return cust === rawName || cust.startsWith(rawName) || rawName.startsWith(cust);
+                    });
+
+                    if (foundOrder && foundOrder.items && foundOrder.items.length > 0) {
+                        matchedPreviousItem = foundOrder.items[0];
+                        if (nameLookupStatus) nameLookupStatus.classList.remove('hidden');
+                        if (nameReorderContainer && reorderItemLabel) {
+                            const formatLabel = matchedPreviousItem.unitFormat === 'pack' ? 'Pack' : 'Carton';
+                            reorderItemLabel.textContent = `${matchedPreviousItem.brand} ${matchedPreviousItem.model} (${formatLabel})`;
+                            nameReorderContainer.classList.remove('hidden');
+                        }
+                    } else {
+                        if (nameReorderContainer) nameReorderContainer.classList.add('hidden');
+                        if (nameLookupStatus) nameLookupStatus.classList.add('hidden');
+                        matchedPreviousItem = null;
+                    }
+                }
+
+                if (customerNameInput) {
+                    customerNameInput.addEventListener('input', checkReturningBuyerName);
+                    customerNameInput.addEventListener('blur', checkReturningBuyerName);
+                }
+
+                if (btnApplyReorder) {
+                    btnApplyReorder.addEventListener('click', () => {
+                        if (!matchedPreviousItem) return;
+                        setManualMode(false);
+
+                        // Find best matching catalog item
+                        const matchedCatalogItem = Object.values(CATALOG_MAP).find(it => {
+                            const bMatch = it.brand.toLowerCase() === (matchedPreviousItem.brand || '').toLowerCase();
+                            const mMatch = it.model.toLowerCase().includes((matchedPreviousItem.model || '').toLowerCase()) ||
+                                           (matchedPreviousItem.model || '').toLowerCase().includes(it.model.toLowerCase());
+                            return bMatch && mMatch;
+                        }) || Object.values(CATALOG_MAP).find(it => it.brand.toLowerCase() === (matchedPreviousItem.brand || '').toLowerCase());
+
+                        if (matchedCatalogItem && luCatalogSelect) {
+                            luCatalogSelect.value = matchedCatalogItem.id;
+                        }
+
+                        if (matchedPreviousItem.unitFormat === 'pack') {
+                            setUnitFormat('pack');
+                        } else {
+                            setUnitFormat('carton');
+                        }
+
+                        if (matchedPreviousItem.qty) {
+                            quantityInput.value = matchedPreviousItem.qty;
+                        }
+
+                        updateCalculationAndUI();
+                        showToast(`⚡ Pre-selected your usual: ${matchedPreviousItem.brand} ${matchedPreviousItem.model}`);
+                        if (nameReorderContainer) nameReorderContainer.classList.add('hidden');
+                    });
+                }
 
                 // Tip Chip Selector listeners
                 tipChips.forEach(chip => {
@@ -2174,7 +2305,6 @@
                 const btnCopyReceipt = document.getElementById('btn-copy-receipt');
                 const btnPrintReceipt = document.getElementById('btn-print-receipt');
 
-                let cachedHistoryOrders = [];
                 let activeReceiptText = '';
 
                 // Asynchronous Order Saver (to SQLite via /api/orders)

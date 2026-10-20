@@ -34,9 +34,9 @@
 ### 003-admin-control-and-quota-governance
 
 #### Unit 001: 001-tip-and-catalog-refinements
-- [x] **001-tip-options-refactor.md** ✅ GENERATED: Single 5€ Round-up + integer-rounded 5% tip - Must - Planned
-- [x] **002-luxembourg-cigarette-catalog.md** ✅ GENERATED: Full manufactured cigarette catalog (no chopped tobacco) - Must - Planned
-- [x] **003-buyer-name-prefiltering.md** ✅ GENERATED: Buyer name history pre-filtering - Must - Planned
+- [x] **001-tip-options-refactor.md** ✅ GENERATED: Single 5€ Round-up + integer-rounded 5% tip - Must - Completed
+- [x] **002-luxembourg-cigarette-catalog.md** ✅ GENERATED: Full manufactured cigarette catalog (no chopped tobacco) - Must - Completed
+- [x] **003-buyer-name-prefiltering.md** ✅ GENERATED: Buyer name history pre-filtering - Must - Completed
 
 #### Unit 002: 002-weekly-quota-governance
 - [x] **001-weekly-quota-backend.md** ✅ GENERATED: Weekly 800-cig quota calculation from Monday 00:00 & server rejection - Must - Planned
@@ -52,7 +52,7 @@
 ## Stories by Status
 
 - **Total Stories**: 18
-- **Planned**: 8
+- **Planned**: 5
 - **Generated**: 18
 - **In Progress**: 0
-- **Completed**: 10
+- **Completed**: 13

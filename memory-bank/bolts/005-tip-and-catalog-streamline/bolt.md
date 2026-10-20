@@ -3,16 +3,25 @@ id: 005-tip-and-catalog-streamline
 unit: 001-tip-and-catalog-refinements
 intent: 003-admin-control-and-quota-governance
 type: simple-construction-bolt
-status: pending
+status: completed
 stories:
   - 001-tip-options-refactor
   - 002-luxembourg-cigarette-catalog
   - 003-buyer-name-prefiltering
 created: '2026-10-20T19:47:00Z'
-started: null
-completed: null
-current_stage: null
-stages_completed: []
+started: '2026-10-20T19:51:30Z'
+completed: '2026-10-20T20:07:00Z'
+current_stage: completed
+stages_completed:
+  - name: plan
+    completed: '2026-10-20T19:51:37Z'
+    artifact: implementation-plan.md
+  - name: implement
+    completed: '2026-10-20T20:02:00Z'
+    artifact: implementation-walkthrough.md
+  - name: test
+    completed: '2026-10-20T20:06:00Z'
+    artifact: test-walkthrough.md
 requires_bolts:
   - 004-coffee-pods-showcase
 enables_bolts:
@@ -50,6 +59,6 @@ Streamline tip buttons (single nearest 5€ round-up and whole 1€ rounded-down
 
 ## Stages
 
-- [ ] **1. Plan**: Pending → implementation-plan.md
-- [ ] **2. Implement**: Pending → index.html
-- [ ] **3. Test**: Pending → test-walkthrough.md
+- [x] **1. Plan**: Completed → implementation-plan.md
+- [x] **2. Implement**: Completed → implementation-walkthrough.md
+- [x] **3. Test**: Completed → test-walkthrough.md

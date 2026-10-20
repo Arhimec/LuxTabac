@@ -31,8 +31,7 @@ test('Checkout Refinement & Promotions Tests (Intent 002)', async (t) => {
         // UI elements
         assert.ok(htmlContent.includes('id="tip-chips-container"'), 'Tip chips container must exist');
         assert.ok(htmlContent.includes('data-tip="none"'), 'Tip option: None must exist');
-        assert.ok(htmlContent.includes('data-tip="round-5"'), 'Tip option: Round 5€ must exist');
-        assert.ok(htmlContent.includes('data-tip="round-10"'), 'Tip option: Round 10€ must exist');
+        assert.ok(htmlContent.includes('data-tip="round-5"'), 'Tip option: Round Up must exist');
         assert.ok(htmlContent.includes('data-tip="percent-5"'), 'Tip option: 5% must exist');
         assert.ok(htmlContent.includes('id="tip-amount-display"'), 'Tip amount display must exist');
         assert.ok(htmlContent.includes('id="summary-tip-row"'), 'Summary tip row must exist in Step 2');
@@ -45,12 +44,9 @@ test('Checkout Refinement & Promotions Tests (Intent 002)', async (t) => {
                 const rem = subtotal % 5;
                 return rem === 0 ? 5.00 : Math.round((5 - rem) * 100) / 100;
             }
-            if (tipMode === 'round-10') {
-                const rem = subtotal % 10;
-                return rem === 0 ? 10.00 : Math.round((10 - rem) * 100) / 100;
-            }
             if (tipMode === 'percent-5') {
-                return Math.round(subtotal * 0.05 * 100) / 100;
+                // Rounded down to nearest 1 EUR
+                return Math.floor(subtotal * 0.05);
             }
             return 0;
         }
@@ -58,10 +54,10 @@ test('Checkout Refinement & Promotions Tests (Intent 002)', async (t) => {
         assert.equal(calculateTip(132, 'none'), 0);
         assert.equal(calculateTip(132, 'round-5'), 3.00); // 132 + 3 = 135
         assert.equal(calculateTip(130, 'round-5'), 5.00); // exact 5 adds 5€
-        assert.equal(calculateTip(132, 'round-10'), 8.00); // 132 + 8 = 140
-        assert.equal(calculateTip(130, 'round-10'), 10.00); // exact 10 adds 10€
         assert.equal(calculateTip(100, 'percent-5'), 5.00);
-        assert.equal(calculateTip(65.50, 'percent-5'), 3.28);
+        assert.equal(calculateTip(77.00, 'percent-5'), 3.00); // Math.floor(3.85) = 3
+        assert.equal(calculateTip(132.00, 'percent-5'), 6.00); // Math.floor(6.60) = 6
+        assert.equal(calculateTip(15.00, 'percent-5'), 0.00); // Math.floor(0.75) = 0
     });
 
     await t.test('4. Coffee Pods & Border Essentials promotional showcase', () => {
