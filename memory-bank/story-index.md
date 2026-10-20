@@ -43,16 +43,16 @@
 - [x] **002-weekly-quota-ui-enforcement.md** ✅ GENERATED: Quota capacity meter and threshold warning modal - Must - Completed
 
 #### Unit 003: 003-admin-auth-and-backoffice
-- [x] **001-admin-auth-and-session.md** ✅ GENERATED: Password-protected admin authentication with session token - Must - Planned
-- [x] **002-admin-settings-management.md** ✅ GENERATED: Admin panel for Revtag, WhatsApp link, and coffee visibility toggle - Must - Planned
-- [x] **003-admin-coffee-and-custom-items.md** ✅ GENERATED: Admin coffee items CRUD and buyer custom cigarette entries - Must - Planned
+- [x] **001-admin-auth-and-session.md** ✅ GENERATED: Password-protected admin authentication with session token - Must - Completed
+- [x] **002-admin-settings-management.md** ✅ GENERATED: Admin panel for Revtag, WhatsApp link, and coffee visibility toggle - Must - Completed
+- [x] **003-admin-coffee-and-custom-items.md** ✅ GENERATED: Admin coffee items CRUD and buyer custom cigarette entries - Must - Completed
 
 ---
 
 ## Stories by Status
 
 - **Total Stories**: 18
-- **Planned**: 3
+- **Planned**: 0
 - **Generated**: 18
 - **In Progress**: 0
-- **Completed**: 15
+- **Completed**: 18

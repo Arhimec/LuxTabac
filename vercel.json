@@ -19,6 +19,38 @@
       "dest": "/api/quota.js"
     },
     {
+      "src": "/api/admin",
+      "dest": "/api/admin.js"
+    },
+    {
+      "src": "/api/admin/(.*)",
+      "dest": "/api/admin.js"
+    },
+    {
+      "src": "/api/settings",
+      "dest": "/api/settings.js"
+    },
+    {
+      "src": "/api/settings/(.*)",
+      "dest": "/api/settings.js"
+    },
+    {
+      "src": "/api/coffee-promos",
+      "dest": "/api/coffee-promos.js"
+    },
+    {
+      "src": "/api/coffee-promos/(.*)",
+      "dest": "/api/coffee-promos.js"
+    },
+    {
+      "src": "/api/custom-items",
+      "dest": "/api/custom-items.js"
+    },
+    {
+      "src": "/api/custom-items/(.*)",
+      "dest": "/api/custom-items.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }

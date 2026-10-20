@@ -387,6 +387,187 @@
         </div>
     </div>
 
+    <!-- Admin Login Modal -->
+    <div id="admin-login-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
+        <div class="relative w-full max-w-sm bg-zinc-900 border border-amber-500/30 rounded-3xl p-6 shadow-2xl space-y-4 fade-in">
+            <div class="flex items-center justify-between pb-3 border-b border-zinc-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                        🔒
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white">Back-Office Login</h3>
+                        <p class="text-[10px] text-zinc-400">LuxTabac Store Administration</p>
+                    </div>
+                </div>
+                <button type="button" id="btn-close-admin-login" class="text-zinc-500 hover:text-white p-1">✕</button>
+            </div>
+            <div id="admin-login-error" class="hidden p-2.5 rounded-xl bg-red-950/60 border border-red-500/50 text-red-200 text-xs">
+                Invalid username or password
+            </div>
+            <form id="admin-login-form" class="space-y-3" novalidate>
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1">Username</label>
+                    <input type="text" id="admin-username" required placeholder="admin" autocomplete="username"
+                        class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-300 mb-1">Password</label>
+                    <input type="password" id="admin-password" required placeholder="••••••••" autocomplete="current-password"
+                        class="w-full bg-zinc-950 border border-zinc-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white outline-none">
+                </div>
+                <button type="submit" id="btn-admin-submit-login"
+                    class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs transition shadow-md shadow-amber-500/20">
+                    Sign In to Back-Office
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Back-Office Management Console Modal -->
+    <div id="admin-backoffice-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
+        <div class="relative w-full max-w-3xl bg-zinc-900 border border-amber-500/30 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] fade-in">
+            <!-- Header -->
+            <div class="p-5 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/60">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold">
+                        ⚡
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white">LuxTabac Back-Office Portal</h3>
+                        <p class="text-[11px] text-zinc-400">Settings, Coffee Promos & Custom Item Pricing</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="btn-admin-logout"
+                        class="px-2.5 py-1.5 rounded-lg bg-zinc-800 hover:bg-red-950/50 hover:text-red-400 text-zinc-400 text-xs font-medium transition">
+                        Logout
+                    </button>
+                    <button type="button" id="btn-close-admin-backoffice"
+                        class="w-8 h-8 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 flex items-center justify-center">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="flex border-b border-zinc-800 bg-zinc-950/30 px-5 pt-2 gap-2 text-xs font-semibold">
+                <button type="button" id="tab-btn-settings" class="admin-tab-btn px-3 py-2 border-b-2 border-amber-500 text-amber-400 transition">
+                    ⚙️ Global Settings
+                </button>
+                <button type="button" id="tab-btn-coffee" class="admin-tab-btn px-3 py-2 border-b-2 border-transparent text-zinc-400 hover:text-white transition">
+                    ☕ Coffee Showcase
+                </button>
+                <button type="button" id="tab-btn-custom-items" class="admin-tab-btn px-3 py-2 border-b-2 border-transparent text-zinc-400 hover:text-white transition">
+                    🏷️ Custom Tobacco & Pricing
+                </button>
+            </div>
+
+            <!-- Content Panels -->
+            <div class="p-6 overflow-y-auto space-y-6 flex-1 text-xs text-zinc-300">
+                <!-- Panel 1: Settings -->
+                <div id="admin-panel-settings" class="space-y-4">
+                    <div class="space-y-3 bg-zinc-950/80 p-4 rounded-2xl border border-zinc-800/80">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400">Store Settings (Admin Maintained)</h4>
+                        <div>
+                            <label class="block text-zinc-300 mb-1 font-medium">Revolut Recipient @Revtag</label>
+                            <p class="text-[11px] text-zinc-500 mb-1.5">Recipient Revolut username for QR transfers (e.g. <code>vladimtul</code>).</p>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-2 bg-zinc-900 border border-zinc-800 rounded-xl font-mono text-zinc-400">@</span>
+                                <input type="text" id="admin-setting-revtag" class="flex-1 bg-zinc-900 border border-zinc-800 focus:border-amber-500 rounded-xl px-3 py-2 font-mono text-white outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-zinc-300 mb-1 font-medium">WhatsApp Courier / Group Invite Link</label>
+                            <p class="text-[11px] text-zinc-500 mb-1.5">Courier chat link or group invite URL (e.g. <code>https://chat.whatsapp.com/...</code> or <code>https://wa.me/352...</code>).</p>
+                            <input type="text" id="admin-setting-whatsapp" class="w-full bg-zinc-900 border border-zinc-800 focus:border-amber-500 rounded-xl px-3 py-2 font-mono text-white outline-none">
+                        </div>
+                        <div class="pt-2 flex items-center justify-between border-t border-zinc-900">
+                            <div>
+                                <span class="block text-zinc-200 font-medium">Coffee Showcase Section Visibility</span>
+                                <span class="text-[11px] text-zinc-500">Show or hide the Border Essentials & Coffee Pods section on the public store.</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="admin-setting-coffee-toggle" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="button" id="btn-save-admin-settings" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs transition shadow-md shadow-amber-500/20">
+                            Save Global Settings
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Panel 2: Coffee Showcase Management -->
+                <div id="admin-panel-coffee" class="hidden space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400">Coffee Promo Cards (Admin Managed Only)</h4>
+                        <button type="button" id="btn-toggle-add-coffee-form" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium transition">
+                            + Add New Product
+                        </button>
+                    </div>
+
+                    <!-- Add Coffee Form (collapsible) -->
+                    <div id="admin-add-coffee-box" class="hidden bg-zinc-950/90 p-4 rounded-2xl border border-amber-500/30 space-y-3">
+                        <h5 class="text-xs font-bold text-white">Create New Coffee Promo Card</h5>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] text-zinc-400 mb-1">Brand</label>
+                                <input type="text" id="new-coffee-brand" placeholder="e.g. Illy / Lavazza" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-zinc-400 mb-1">Product Title</label>
+                                <input type="text" id="new-coffee-title" placeholder="e.g. Classico Medium Roast" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-zinc-400 mb-1">Pack Quantity</label>
+                                <input type="text" id="new-coffee-qty" placeholder="e.g. 50 Capsules / 250g" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-zinc-400 mb-1">Format Description</label>
+                                <input type="text" id="new-coffee-format" placeholder="e.g. Nespresso Compatible" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-zinc-400 mb-1">Price (€ EUR)</label>
+                                <input type="number" step="0.01" id="new-coffee-price" placeholder="9.90" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-zinc-400 mb-1">Badge Tag</label>
+                                <input type="text" id="new-coffee-badge" placeholder="e.g. Value Pack" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] text-zinc-400 mb-1">Highlight Note</label>
+                            <input type="text" id="new-coffee-highlight" placeholder="e.g. 100% Arabica • Velvet Crema" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white">
+                        </div>
+                        <div class="flex justify-end gap-2 pt-1">
+                            <button type="button" id="btn-cancel-add-coffee" class="px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-400 hover:text-white text-xs">Cancel</button>
+                            <button type="button" id="btn-submit-add-coffee" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs">Save Card</button>
+                        </div>
+                    </div>
+
+                    <!-- Current Coffee Items List -->
+                    <div id="admin-coffee-items-list" class="space-y-2">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Panel 3: Custom Tobacco Items & Pricing -->
+                <div id="admin-panel-custom-items" class="hidden space-y-4">
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400">Custom Cigarette Review & Pricing Adjustments</h4>
+                        <p class="text-[11px] text-zinc-400 mt-1">When buyers input custom brands/models, they are saved here. Adjust pack & carton prices to set their official catalog price.</p>
+                    </div>
+                    <div id="admin-custom-items-container" class="space-y-2">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Top Navigation / Header -->
     <header class="border-b border-zinc-800/80 bg-zinc-950/85 backdrop-blur-md sticky top-0 z-30">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
@@ -446,39 +627,16 @@
                         class="hidden px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-500 text-zinc-950">0</span>
                 </button>
 
-                <!-- Merchant Revolut Tag Config Button -->
-                <div class="relative">
-                    <button type="button" id="btn-toggle-revtag"
-                        class="px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs font-mono text-blue-400 transition flex items-center gap-1"
-                        title="Configure recipient Revolut @revtag">
-                        <span>@</span><span id="header-revtag-label">vladimtul</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-zinc-500 ml-0.5" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </button>
-
-                    <!-- Revolut Tag Popover -->
-                    <div id="revtag-popover"
-                        class="hidden absolute right-0 mt-2 w-64 bg-zinc-900 border border-zinc-700 rounded-2xl p-4 shadow-2xl z-40">
-                        <label for="input-merchant-revtag"
-                            class="block text-xs font-semibold text-zinc-200 mb-1">Recipient Revolut @Revtag</label>
-                        <p class="text-[11px] text-zinc-400 mb-2.5">Customize the Revolut.me account that receives the
-                            QR transfer.</p>
-                        <div class="flex items-center gap-1.5">
-                            <span
-                                class="text-xs font-mono text-zinc-400 bg-zinc-950 px-2.5 py-2 rounded-lg border border-zinc-800">@</span>
-                            <input type="text" id="input-merchant-revtag" value="vladimtul"
-                                class="w-full bg-zinc-950 border border-zinc-800 focus:border-blue-500 rounded-lg px-2.5 py-1.5 text-xs font-mono text-white outline-none">
-                            <button type="button" id="btn-save-revtag"
-                                class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition">
-                                Save
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <!-- Admin Portal Button -->
+                <button type="button" id="btn-open-admin"
+                    class="px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-xs font-semibold text-zinc-300 hover:text-amber-400 transition flex items-center gap-1.5 shadow-sm"
+                    title="Admin Management Console">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <span>Admin</span>
+                    <span id="admin-badge-indicator" class="hidden w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                </button>
 
                 <!-- Step Indicator -->
                 <div class="hidden sm:flex items-center gap-1.5 text-xs font-medium pl-2 border-l border-zinc-800">
@@ -1106,7 +1264,7 @@
             </div>
 
             <!-- Promotional Cards Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div id="coffee-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Promo Item 1 -->
                 <div class="bg-zinc-950/80 border border-zinc-800 hover:border-amber-500/40 rounded-2xl p-4 flex flex-col justify-between transition group">
                     <div class="space-y-2">
@@ -1361,10 +1519,13 @@
                 let isManualMode = false;
                 let selectedUnitFormat = 'carton'; // 'carton' or 'pack'
                 let merchantRevtag = 'vladimtul';
+                let currentWhatsappLink = 'https://wa.me/';
                 let orderBasket = []; // Array of multi-item objects
                 let currentTipMode = 'none'; // 'none', 'round-5', 'percent-5'
                 let cachedHistoryOrders = []; // Cached orders loaded from backend/localStorage
                 let matchedPreviousItem = null; // Stored previous brand choice for buyer
+                let cachedCustomItems = []; // Community / custom catalog additions
+                let adminAuthToken = sessionStorage.getItem('luxtabac_admin_token') || '';
 
                 // =========================================================================
                 // 3. DOM ELEMENTS
@@ -1384,12 +1545,49 @@
                 const explorerListContainer = document.getElementById('explorer-list-container');
                 const btnExplorerManual = document.getElementById('btn-explorer-manual');
 
-                // Revtag Config Popover
-                const btnToggleRevtag = document.getElementById('btn-toggle-revtag');
-                const revtagPopover = document.getElementById('revtag-popover');
-                const inputMerchantRevtag = document.getElementById('input-merchant-revtag');
-                const btnSaveRevtag = document.getElementById('btn-save-revtag');
-                const headerRevtagLabel = document.getElementById('header-revtag-label');
+                // Admin Controls & Modals
+                const btnOpenAdmin = document.getElementById('btn-open-admin');
+                const adminBadgeIndicator = document.getElementById('admin-badge-indicator');
+                const adminLoginModal = document.getElementById('admin-login-modal');
+                const btnCloseAdminLogin = document.getElementById('btn-close-admin-login');
+                const adminLoginForm = document.getElementById('admin-login-form');
+                const adminUsernameInput = document.getElementById('admin-username');
+                const adminPasswordInput = document.getElementById('admin-password');
+                const adminLoginError = document.getElementById('admin-login-error');
+                const adminBackofficeModal = document.getElementById('admin-backoffice-modal');
+                const btnCloseAdminBackoffice = document.getElementById('btn-close-admin-backoffice');
+                const btnAdminLogout = document.getElementById('btn-admin-logout');
+
+                // Admin Tabs & Panels
+                const tabBtnSettings = document.getElementById('tab-btn-settings');
+                const tabBtnCoffee = document.getElementById('tab-btn-coffee');
+                const tabBtnCustomItems = document.getElementById('tab-btn-custom-items');
+                const adminPanelSettings = document.getElementById('admin-panel-settings');
+                const adminPanelCoffee = document.getElementById('admin-panel-coffee');
+                const adminPanelCustomItems = document.getElementById('admin-panel-custom-items');
+
+                // Admin Settings Inputs
+                const adminSettingRevtag = document.getElementById('admin-setting-revtag');
+                const adminSettingWhatsapp = document.getElementById('admin-setting-whatsapp');
+                const adminSettingCoffeeToggle = document.getElementById('admin-setting-coffee-toggle');
+                const btnSaveAdminSettings = document.getElementById('btn-save-admin-settings');
+
+                // Admin Coffee Elements
+                const btnToggleAddCoffeeForm = document.getElementById('btn-toggle-add-coffee-form');
+                const adminAddCoffeeBox = document.getElementById('admin-add-coffee-box');
+                const newCoffeeBrand = document.getElementById('new-coffee-brand');
+                const newCoffeeTitle = document.getElementById('new-coffee-title');
+                const newCoffeeQty = document.getElementById('new-coffee-qty');
+                const newCoffeeFormat = document.getElementById('new-coffee-format');
+                const newCoffeePrice = document.getElementById('new-coffee-price');
+                const newCoffeeBadge = document.getElementById('new-coffee-badge');
+                const newCoffeeHighlight = document.getElementById('new-coffee-highlight');
+                const btnCancelAddCoffee = document.getElementById('btn-cancel-add-coffee');
+                const btnSubmitAddCoffee = document.getElementById('btn-submit-add-coffee');
+                const adminCoffeeItemsList = document.getElementById('admin-coffee-items-list');
+
+                // Admin Custom Tobacco Elements
+                const adminCustomItemsContainer = document.getElementById('admin-custom-items-container');
 
                 // Views & Stepper
                 const orderView = document.getElementById('order-view');
@@ -1547,6 +1745,31 @@
 
                         luCatalogSelect.appendChild(optgroup);
                     });
+
+                    // Add Custom Community Tobacco Items if available
+                    if (cachedCustomItems && cachedCustomItems.length > 0) {
+                        const customGroup = document.createElement('optgroup');
+                        customGroup.label = '── ✨ Custom Community Cigarettes ──';
+                        cachedCustomItems.forEach(item => {
+                            const option = document.createElement('option');
+                            const customId = `custom_${item.id}`;
+                            option.value = customId;
+                            option.textContent = `${item.brand} ${item.model} — Pack: €${Number(item.packPrice || 0).toFixed(2)} | Carton: €${Number(item.cartonPrice || 0).toFixed(2)}`;
+                            customGroup.appendChild(option);
+
+                            // Dynamically register in lookup map
+                            CATALOG_MAP[customId] = {
+                                id: customId,
+                                brand: item.brand,
+                                model: item.model,
+                                packPrice: Number(item.packPrice || 0),
+                                cartonPrice: Number(item.cartonPrice || 0),
+                                cigsPerUnit: item.cigsPerUnit || 20,
+                                isPot: false
+                            };
+                        });
+                        luCatalogSelect.appendChild(customGroup);
+                    }
 
                     // Add Manual Entry Option at the bottom of the dropdown
                     const manualGroup = document.createElement('optgroup');
@@ -2150,19 +2373,454 @@
                     manualBrandInput.focus();
                 });
 
-                // Revolut Tag Settings Popover
-                btnToggleRevtag.addEventListener('click', () => {
-                    revtagPopover.classList.toggle('hidden');
-                });
-                btnSaveRevtag.addEventListener('click', () => {
-                    const cleaned = inputMerchantRevtag.value.trim().replace(/^@+/, '').replace(/[^a-zA-Z0-9_.-]/g, '') || 'vladimtul';
-                    merchantRevtag = cleaned;
-                    inputMerchantRevtag.value = cleaned;
-                    headerRevtagLabel.textContent = cleaned;
-                    qrRevtagPill.textContent = `revolut.me/${cleaned}`;
-                    revtagPopover.classList.add('hidden');
-                    showToast(`Revolut recipient updated to @${cleaned}`);
-                });
+                // =========================================================================
+                // ADMIN BACK-OFFICE & PUBLIC SYNC LOGIC
+                // =========================================================================
+                function getAdminHeaders() {
+                    const headers = { 'Content-Type': 'application/json' };
+                    if (adminAuthToken) {
+                        headers['Authorization'] = `Bearer ${adminAuthToken}`;
+                    }
+                    return headers;
+                }
+
+                async function checkAdminSession() {
+                    if (!adminAuthToken) {
+                        if (adminBadgeIndicator) adminBadgeIndicator.classList.add('hidden');
+                        return false;
+                    }
+                    try {
+                        const res = await fetch('/api/admin/session', { headers: getAdminHeaders() });
+                        if (res.ok) {
+                            if (adminBadgeIndicator) adminBadgeIndicator.classList.remove('hidden');
+                            return true;
+                        } else {
+                            adminAuthToken = '';
+                            sessionStorage.removeItem('luxtabac_admin_token');
+                            if (adminBadgeIndicator) adminBadgeIndicator.classList.add('hidden');
+                            return false;
+                        }
+                    } catch (e) {
+                        return false;
+                    }
+                }
+
+                function openAdminPortal() {
+                    if (adminAuthToken) {
+                        if (adminBackofficeModal) adminBackofficeModal.classList.remove('hidden');
+                        switchAdminTab('settings');
+                        loadAdminData();
+                    } else {
+                        if (adminLoginError) adminLoginError.classList.add('hidden');
+                        if (adminUsernameInput) adminUsernameInput.value = '';
+                        if (adminPasswordInput) adminPasswordInput.value = '';
+                        if (adminLoginModal) adminLoginModal.classList.remove('hidden');
+                        if (adminUsernameInput) adminUsernameInput.focus();
+                    }
+                }
+
+                function closeAdminModals() {
+                    if (adminLoginModal) adminLoginModal.classList.add('hidden');
+                    if (adminBackofficeModal) adminBackofficeModal.classList.add('hidden');
+                }
+
+                function switchAdminTab(activeTab) {
+                    const tabs = [
+                        { name: 'settings', btn: tabBtnSettings, panel: adminPanelSettings },
+                        { name: 'coffee', btn: tabBtnCoffee, panel: adminPanelCoffee },
+                        { name: 'custom', btn: tabBtnCustomItems, panel: adminPanelCustomItems }
+                    ];
+
+                    tabs.forEach(t => {
+                        if (!t.btn || !t.panel) return;
+                        if (t.name === activeTab) {
+                            t.btn.className = 'admin-tab-btn px-3 py-2 border-b-2 border-amber-500 text-amber-400 transition';
+                            t.panel.classList.remove('hidden');
+                        } else {
+                            t.btn.className = 'admin-tab-btn px-3 py-2 border-b-2 border-transparent text-zinc-400 hover:text-white transition';
+                            t.panel.classList.add('hidden');
+                        }
+                    });
+
+                    if (activeTab === 'coffee') renderAdminCoffeeList();
+                    if (activeTab === 'custom') renderAdminCustomItems();
+                }
+
+                async function loadAdminData() {
+                    try {
+                        const res = await fetch('/api/settings');
+                        if (res.ok) {
+                            const data = await res.json();
+                            const settings = data.settings || data;
+                            if (adminSettingRevtag) adminSettingRevtag.value = settings.revtag || 'vladimtul';
+                            if (adminSettingWhatsapp) adminSettingWhatsapp.value = settings.whatsappLink || 'https://wa.me/';
+                            if (adminSettingCoffeeToggle) adminSettingCoffeeToggle.checked = !!settings.coffeeVisible;
+                        }
+                    } catch (e) { /* ignore */ }
+                }
+
+                // Public Dynamic Data Loaders
+                async function loadPublicSettings() {
+                    try {
+                        const res = await fetch('/api/settings');
+                        if (!res.ok) return;
+                        const data = await res.json();
+                        const settings = data.settings || data;
+                        if (settings.revtag) {
+                            merchantRevtag = settings.revtag;
+                            if (qrRevtagPill) qrRevtagPill.textContent = `revolut.me/${settings.revtag}`;
+                            if (adminSettingRevtag) adminSettingRevtag.value = settings.revtag;
+                        }
+                        if (settings.whatsappLink) {
+                            currentWhatsappLink = settings.whatsappLink;
+                            if (adminSettingWhatsapp) adminSettingWhatsapp.value = settings.whatsappLink;
+                        }
+                        if (typeof settings.coffeeVisible !== 'undefined') {
+                            const coffeeSection = document.getElementById('coffee-pods-showcase');
+                            if (coffeeSection) {
+                                if (settings.coffeeVisible) {
+                                    coffeeSection.classList.remove('hidden');
+                                } else {
+                                    coffeeSection.classList.add('hidden');
+                                }
+                            }
+                            if (adminSettingCoffeeToggle) adminSettingCoffeeToggle.checked = !!settings.coffeeVisible;
+                        }
+                    } catch (e) {
+                        console.warn('Could not fetch settings:', e);
+                    }
+                }
+
+                async function loadPublicCoffeePromos() {
+                    try {
+                        const res = await fetch('/api/coffee-promos');
+                        if (!res.ok) return;
+                        const data = await res.json();
+                        const items = data.items || (Array.isArray(data) ? data : []);
+                        const grid = document.getElementById('coffee-cards-grid');
+                        if (!grid) return;
+
+                        if (items.length === 0) {
+                            grid.innerHTML = '<div class="col-span-full text-center text-xs text-zinc-500 py-6">No promotional items available right now.</div>';
+                            return;
+                        }
+
+                        grid.innerHTML = items.map(item => `
+                            <div class="bg-zinc-950/80 border border-zinc-800 hover:border-amber-500/40 rounded-2xl p-4 flex flex-col justify-between transition group">
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-start">
+                                        <span class="px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-400 text-[10px] font-bold">${escapeHTML(item.brand || 'Coffee')}</span>
+                                        <span class="text-[11px] font-mono text-emerald-400 font-semibold">${escapeHTML(item.badge || 'Border Value')}</span>
+                                    </div>
+                                    <h4 class="text-sm font-bold text-white group-hover:text-amber-400 transition">${escapeHTML(item.title)}</h4>
+                                    <p class="text-xs text-zinc-400">${escapeHTML(item.qty || '')}</p>
+                                    <p class="text-[11px] text-zinc-500">${escapeHTML(item.format || '')}</p>
+                                </div>
+                                <div class="pt-4 mt-3 border-t border-zinc-900 flex items-baseline justify-between">
+                                    <span class="text-[11px] text-zinc-500 font-mono">${escapeHTML(item.highlight || '')}</span>
+                                    <span class="text-base font-extrabold text-amber-400 font-mono">€${Number(item.price || 0).toFixed(2)}</span>
+                                </div>
+                            </div>
+                        `).join('');
+                    } catch (e) {
+                        console.warn('Could not load coffee promos:', e);
+                    }
+                }
+
+                async function loadPublicCustomItems() {
+                    try {
+                        const res = await fetch('/api/custom-items');
+                        if (!res.ok) return;
+                        const data = await res.json();
+                        cachedCustomItems = data.items || (Array.isArray(data) ? data : []);
+                        populateCatalogDropdown();
+                    } catch (e) {
+                        console.warn('Could not load custom items:', e);
+                    }
+                }
+
+                // Admin Settings Save
+                async function handleSaveAdminSettings() {
+                    if (!adminAuthToken) return;
+                    const revtag = (adminSettingRevtag ? adminSettingRevtag.value.trim() : '').replace(/^@+/, '') || 'vladimtul';
+                    const whatsappLink = (adminSettingWhatsapp ? adminSettingWhatsapp.value.trim() : '') || 'https://wa.me/';
+                    const coffeeVisible = adminSettingCoffeeToggle ? adminSettingCoffeeToggle.checked : true;
+
+                    try {
+                        const res = await fetch('/api/settings', {
+                            method: 'PUT',
+                            headers: getAdminHeaders(),
+                            body: JSON.stringify({ revtag, whatsappLink, coffeeVisible })
+                        });
+                        if (res.ok) {
+                            showToast('Store settings saved successfully!');
+                            await loadPublicSettings();
+                        } else {
+                            showToast('Failed to save settings: Unauthorized');
+                        }
+                    } catch (e) {
+                        showToast('Error saving settings');
+                    }
+                }
+
+                // Admin Coffee Cards List & Management
+                async function renderAdminCoffeeList() {
+                    if (!adminCoffeeItemsList) return;
+                    adminCoffeeItemsList.innerHTML = '<p class="text-xs text-zinc-500 py-3 text-center">Loading coffee items...</p>';
+                    try {
+                        const res = await fetch('/api/coffee-promos');
+                        if (!res.ok) throw new Error('Fetch failed');
+                        const data = await res.json();
+                        const items = data.items || (Array.isArray(data) ? data : []);
+                        if (items.length === 0) {
+                            adminCoffeeItemsList.innerHTML = '<p class="text-xs text-zinc-500 py-3 text-center">No coffee promo items configured.</p>';
+                            return;
+                        }
+                        adminCoffeeItemsList.innerHTML = items.map(it => `
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-zinc-950/70 border border-zinc-800">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400">${escapeHTML(it.brand)}</span>
+                                        <span class="font-semibold text-white">${escapeHTML(it.title)}</span>
+                                        <span class="text-zinc-500 text-[11px]">(${escapeHTML(it.qty || '')})</span>
+                                    </div>
+                                    <div class="text-[11px] text-zinc-400 mt-0.5">${escapeHTML(it.format || '')} • €${Number(it.price).toFixed(2)}</div>
+                                </div>
+                                <button type="button" data-delete-coffee="${it.id}" class="px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-red-950/50 hover:text-red-400 text-zinc-400 text-xs transition">
+                                    Delete
+                                </button>
+                            </div>
+                        `).join('');
+
+                        // Attach delete handlers
+                        adminCoffeeItemsList.querySelectorAll('[data-delete-coffee]').forEach(btn => {
+                            btn.addEventListener('click', async (e) => {
+                                const id = e.currentTarget.getAttribute('data-delete-coffee');
+                                if (!id) return;
+                                try {
+                                    const delRes = await fetch(`/api/coffee-promos?id=${encodeURIComponent(id)}`, {
+                                        method: 'DELETE',
+                                        headers: getAdminHeaders()
+                                    });
+                                    if (delRes.ok) {
+                                        showToast('Coffee item removed');
+                                        await renderAdminCoffeeList();
+                                        await loadPublicCoffeePromos();
+                                    } else {
+                                        showToast('Error removing item');
+                                    }
+                                } catch (err) {
+                                    showToast('Network error');
+                                }
+                            });
+                        });
+                    } catch (e) {
+                        adminCoffeeItemsList.innerHTML = '<p class="text-xs text-red-400 py-3 text-center">Error loading items.</p>';
+                    }
+                }
+
+                async function handleAddCoffeeCard() {
+                    if (!adminAuthToken) return;
+                    const brand = newCoffeeBrand ? newCoffeeBrand.value.trim() : '';
+                    const title = newCoffeeTitle ? newCoffeeTitle.value.trim() : '';
+                    const qty = newCoffeeQty ? newCoffeeQty.value.trim() : '';
+                    const format = newCoffeeFormat ? newCoffeeFormat.value.trim() : '';
+                    const price = parseFloat(newCoffeePrice ? newCoffeePrice.value : '0');
+                    const badge = newCoffeeBadge ? newCoffeeBadge.value.trim() : 'Border Special';
+                    const highlight = newCoffeeHighlight ? newCoffeeHighlight.value.trim() : '';
+
+                    if (!brand || !title || price <= 0) {
+                        showToast('Please enter brand, title, and valid price');
+                        return;
+                    }
+
+                    try {
+                        const res = await fetch('/api/coffee-promos', {
+                            method: 'POST',
+                            headers: getAdminHeaders(),
+                            body: JSON.stringify({ brand, title, qty, format, price, badge, highlight })
+                        });
+                        if (res.ok) {
+                            showToast('Coffee product added!');
+                            if (newCoffeeBrand) newCoffeeBrand.value = '';
+                            if (newCoffeeTitle) newCoffeeTitle.value = '';
+                            if (newCoffeeQty) newCoffeeQty.value = '';
+                            if (newCoffeeFormat) newCoffeeFormat.value = '';
+                            if (newCoffeePrice) newCoffeePrice.value = '';
+                            if (newCoffeeBadge) newCoffeeBadge.value = '';
+                            if (newCoffeeHighlight) newCoffeeHighlight.value = '';
+                            if (adminAddCoffeeBox) adminAddCoffeeBox.classList.add('hidden');
+                            await renderAdminCoffeeList();
+                            await loadPublicCoffeePromos();
+                        } else {
+                            showToast('Failed to add coffee product');
+                        }
+                    } catch (e) {
+                        showToast('Error creating product');
+                    }
+                }
+
+                // Admin Custom Items & Pricing Management
+                async function renderAdminCustomItems() {
+                    if (!adminCustomItemsContainer) return;
+                    adminCustomItemsContainer.innerHTML = '<p class="text-xs text-zinc-500 py-3 text-center">Loading custom items...</p>';
+                    try {
+                        const res = await fetch('/api/custom-items');
+                        if (!res.ok) throw new Error('Fetch failed');
+                        const data = await res.json();
+                        const items = data.items || (Array.isArray(data) ? data : []);
+                        if (items.length === 0) {
+                            adminCustomItemsContainer.innerHTML = '<p class="text-xs text-zinc-500 py-3 text-center">No custom cigarette entries submitted by buyers yet.</p>';
+                            return;
+                        }
+
+                        adminCustomItemsContainer.innerHTML = items.map(it => `
+                            <div class="p-3 rounded-xl bg-zinc-950/70 border border-zinc-800 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="font-bold text-white text-xs">${escapeHTML(it.brand)} ${escapeHTML(it.model)}</span>
+                                        <span class="text-[10px] text-zinc-500 ml-2">Added by: ${escapeHTML(it.createdBy || 'Buyer')}</span>
+                                    </div>
+                                    <span class="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 font-mono">ID #${it.id}</span>
+                                </div>
+                                <div class="flex items-center gap-3 pt-1 border-t border-zinc-900">
+                                    <div class="flex items-center gap-1.5">
+                                        <label class="text-[11px] text-zinc-400">Pack (€):</label>
+                                        <input type="number" step="0.05" id="custom-pack-${it.id}" value="${Number(it.packPrice || 0).toFixed(2)}"
+                                            class="w-20 bg-zinc-900 border border-zinc-800 rounded px-2 py-1 text-xs text-white font-mono">
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <label class="text-[11px] text-zinc-400">Carton (€):</label>
+                                        <input type="number" step="0.10" id="custom-carton-${it.id}" value="${Number(it.cartonPrice || 0).toFixed(2)}"
+                                            class="w-20 bg-zinc-900 border border-zinc-800 rounded px-2 py-1 text-xs text-white font-mono">
+                                    </div>
+                                    <button type="button" data-save-custom="${it.id}"
+                                        class="ml-auto px-3 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs transition">
+                                        Update Price
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('');
+
+                        // Attach update handlers
+                        adminCustomItemsContainer.querySelectorAll('[data-save-custom]').forEach(btn => {
+                            btn.addEventListener('click', async (e) => {
+                                const id = e.currentTarget.getAttribute('data-save-custom');
+                                if (!id) return;
+                                const packInput = document.getElementById(`custom-pack-${id}`);
+                                const cartonInput = document.getElementById(`custom-carton-${id}`);
+                                const packPrice = parseFloat(packInput ? packInput.value : '0');
+                                const cartonPrice = parseFloat(cartonInput ? cartonInput.value : '0');
+
+                                try {
+                                    const updRes = await fetch('/api/custom-items', {
+                                        method: 'PUT',
+                                        headers: getAdminHeaders(),
+                                        body: JSON.stringify({ id, packPrice, cartonPrice })
+                                    });
+                                    if (updRes.ok) {
+                                        showToast('Custom item price updated!');
+                                        await loadPublicCustomItems();
+                                    } else {
+                                        showToast('Failed to update price');
+                                    }
+                                } catch (err) {
+                                    showToast('Network error');
+                                }
+                            });
+                        });
+                    } catch (e) {
+                        adminCustomItemsContainer.innerHTML = '<p class="text-xs text-red-400 py-3 text-center">Error loading custom items.</p>';
+                    }
+                }
+
+                // Admin Event Listeners
+                if (btnOpenAdmin) btnOpenAdmin.addEventListener('click', openAdminPortal);
+                if (btnCloseAdminLogin) btnCloseAdminLogin.addEventListener('click', closeAdminModals);
+                if (btnCloseAdminBackoffice) btnCloseAdminBackoffice.addEventListener('click', closeAdminModals);
+
+                if (adminLoginModal) {
+                    adminLoginModal.addEventListener('click', (e) => {
+                        if (e.target === adminLoginModal) closeAdminModals();
+                    });
+                }
+                if (adminBackofficeModal) {
+                    adminBackofficeModal.addEventListener('click', (e) => {
+                        if (e.target === adminBackofficeModal) closeAdminModals();
+                    });
+                }
+
+                if (tabBtnSettings) tabBtnSettings.addEventListener('click', () => switchAdminTab('settings'));
+                if (tabBtnCoffee) tabBtnCoffee.addEventListener('click', () => switchAdminTab('coffee'));
+                if (tabBtnCustomItems) tabBtnCustomItems.addEventListener('click', () => switchAdminTab('custom'));
+
+                if (btnSaveAdminSettings) btnSaveAdminSettings.addEventListener('click', handleSaveAdminSettings);
+
+                if (btnToggleAddCoffeeForm) {
+                    btnToggleAddCoffeeForm.addEventListener('click', () => {
+                        if (adminAddCoffeeBox) adminAddCoffeeBox.classList.toggle('hidden');
+                    });
+                }
+                if (btnCancelAddCoffee) {
+                    btnCancelAddCoffee.addEventListener('click', () => {
+                        if (adminAddCoffeeBox) adminAddCoffeeBox.classList.add('hidden');
+                    });
+                }
+                if (btnSubmitAddCoffee) btnSubmitAddCoffee.addEventListener('click', handleAddCoffeeCard);
+
+                if (adminLoginForm) {
+                    adminLoginForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        if (adminLoginError) adminLoginError.classList.add('hidden');
+                        const username = adminUsernameInput ? adminUsernameInput.value.trim() : '';
+                        const password = adminPasswordInput ? adminPasswordInput.value : '';
+
+                        try {
+                            const res = await fetch('/api/admin/login', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ username, password })
+                            });
+                            const data = await res.json();
+                            if (res.ok && data.token) {
+                                adminAuthToken = data.token;
+                                sessionStorage.setItem('luxtabac_admin_token', adminAuthToken);
+                                if (adminBadgeIndicator) adminBadgeIndicator.classList.remove('hidden');
+                                if (adminLoginModal) adminLoginModal.classList.add('hidden');
+                                if (adminBackofficeModal) adminBackofficeModal.classList.remove('hidden');
+                                switchAdminTab('settings');
+                                loadAdminData();
+                                showToast('Welcome to Back-Office');
+                            } else {
+                                if (adminLoginError) {
+                                    adminLoginError.textContent = data.error || 'Invalid username or password';
+                                    adminLoginError.classList.remove('hidden');
+                                }
+                            }
+                        } catch (err) {
+                            if (adminLoginError) {
+                                adminLoginError.textContent = 'Server connection error';
+                                adminLoginError.classList.remove('hidden');
+                            }
+                        }
+                    });
+                }
+
+                if (btnAdminLogout) {
+                    btnAdminLogout.addEventListener('click', async () => {
+                        try {
+                            await fetch('/api/admin/logout', {
+                                method: 'POST',
+                                headers: getAdminHeaders()
+                            });
+                        } catch (e) { /* ignore */ }
+                        adminAuthToken = '';
+                        sessionStorage.removeItem('luxtabac_admin_token');
+                        if (adminBadgeIndicator) adminBadgeIndicator.classList.add('hidden');
+                        if (adminBackofficeModal) adminBackofficeModal.classList.add('hidden');
+                        showToast('Logged out of Back-Office');
+                    });
+                }
 
                 // Mode Toggle Buttons
                 btnModeCatalog.addEventListener('click', () => setManualMode(false));
@@ -2479,7 +3137,12 @@
                     );
 
                     if (btnShareWhatsapp) {
-                        btnShareWhatsapp.href = `https://wa.me/?text=${encodeURIComponent(currentOrderManifest)}`;
+                        let waBase = currentWhatsappLink || 'https://wa.me/';
+                        if (!waBase.startsWith('http')) {
+                            waBase = `https://wa.me/${waBase.replace(/^@/, '')}`;
+                        }
+                        const sep = waBase.includes('?') ? '&' : '?';
+                        btnShareWhatsapp.href = `${waBase}${sep}text=${encodeURIComponent(currentOrderManifest)}`;
                     }
 
                     // Switch to Payment View
@@ -2884,6 +3547,10 @@ ${escapeHTML(activeReceiptText)}
                 updateCalculationAndUI();
                 loadHistoryFromApi();
                 fetchQuotaStatus();
+                loadPublicSettings();
+                loadPublicCoffeePromos();
+                loadPublicCustomItems();
+                checkAdminSession();
             })();
     </script>
 </body>

@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const { DatabaseSync } = require('node:sqlite');
 
 let dbInstance = null;
@@ -49,12 +50,65 @@ function getDb() {
             );
             CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at DESC);
             CREATE INDEX IF NOT EXISTS idx_orders_code ON orders(order_code);
+
+            CREATE TABLE IF NOT EXISTS app_settings (
+                key TEXT PRIMARY KEY,
+                value TEXT NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS admin_sessions (
+                token TEXT PRIMARY KEY,
+                username TEXT NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS coffee_promos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                brand TEXT NOT NULL,
+                title TEXT NOT NULL,
+                pack_quantity TEXT,
+                format TEXT,
+                price REAL NOT NULL,
+                badge TEXT,
+                highlight TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS custom_items (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                brand TEXT NOT NULL,
+                model TEXT NOT NULL,
+                pack_price REAL DEFAULT 7.50,
+                carton_price REAL DEFAULT 75.00,
+                created_by TEXT DEFAULT 'Buyer',
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
         `);
 
         try {
             dbInstance.exec('ALTER TABLE orders ADD COLUMN tip_amount REAL DEFAULT 0;');
         } catch {
             // column already exists
+        }
+
+        // Seed default app_settings
+        dbInstance.exec(`
+            INSERT OR IGNORE INTO app_settings (key, value) VALUES 
+            ('revtag', 'vladimtul'),
+            ('whatsapp_link', 'https://wa.me/'),
+            ('coffee_visible', '1');
+        `);
+
+        // Seed default coffee promos if empty
+        const promoCount = dbInstance.prepare('SELECT COUNT(*) AS c FROM coffee_promos').get().c;
+        if (promoCount === 0) {
+            dbInstance.exec(`
+                INSERT INTO coffee_promos (brand, title, pack_quantity, format, price, badge, highlight) VALUES
+                ('Lavazza', 'Qualità Rossa / Crema e Gusto', '36 Pods (Economy Pack)', 'A Modo Mio / Nespresso Compatible', 9.50, 'Border Value', 'Rich Italian Roast • €0.26 / cup'),
+                ('Nespresso', 'Master Origin & Ispirazione Italiana', '50 Pods (5 Sleeves)', 'OriginalLine Aluminum Capsules', 21.00, 'Luxembourg Tarif', 'Dark Roast & Velvet Crema • Official LU Price'),
+                ('Senseo', 'Classique & Corsé Mega Box', '60 Soft Pods', 'Compostable Filter Pads', 11.20, 'Volume Choice', '100% Arabica Blend • Daily Driver'),
+                ('Dolce Gusto', 'Espresso Intenso & Lungo', '30 Pods', 'Hermetic Smart Pods', 8.90, 'Popular', 'Intense Aroma • Rich Crema Layer');
+            `);
         }
     }
     return dbInstance;
@@ -235,6 +289,131 @@ function getQuotaStatus(refDate = new Date()) {
     };
 }
 
+// =========================================================================
+// SETTINGS MANAGEMENT (Story 002)
+// =========================================================================
+
+function getAllSettings() {
+    const db = getDb();
+    const rows = db.prepare('SELECT key, value FROM app_settings').all();
+    const map = {};
+    rows.forEach(r => { map[r.key] = r.value; });
+    return {
+        revtag: map.revtag || 'vladimtul',
+        whatsappLink: map.whatsapp_link || 'https://wa.me/',
+        coffeeVisible: map.coffee_visible !== '0'
+    };
+}
+
+function updateSettings(updates = {}) {
+    const db = getDb();
+    const upsert = db.prepare('INSERT INTO app_settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value');
+    if (typeof updates.revtag !== 'undefined') upsert.run('revtag', String(updates.revtag).trim());
+    if (typeof updates.whatsappLink !== 'undefined') upsert.run('whatsapp_link', String(updates.whatsappLink).trim());
+    if (typeof updates.coffeeVisible !== 'undefined') upsert.run('coffee_visible', updates.coffeeVisible ? '1' : '0');
+    return getAllSettings();
+}
+
+// =========================================================================
+// ADMIN AUTHENTICATION & SESSIONS (Story 001)
+// =========================================================================
+
+const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'luxtabac2026!';
+
+function validateAdminCredentials(username, password) {
+    return String(username).trim() === ADMIN_USER && String(password) === ADMIN_PASSWORD;
+}
+
+function createAdminSession(username) {
+    const db = getDb();
+    const token = crypto.randomBytes(32).toString('hex');
+    db.prepare('INSERT INTO admin_sessions (token, username) VALUES (?, ?)').run(token, username);
+    return token;
+}
+
+function verifyAdminSession(token) {
+    if (!token) return null;
+    const db = getDb();
+    const session = db.prepare('SELECT token, username, created_at FROM admin_sessions WHERE token = ?').get(token);
+    return session || null;
+}
+
+function deleteAdminSession(token) {
+    if (!token) return;
+    const db = getDb();
+    db.prepare('DELETE FROM admin_sessions WHERE token = ?').run(token);
+}
+
+function extractBearerToken(req) {
+    const authHeader = req.headers && (req.headers.authorization || req.headers.Authorization);
+    if (!authHeader) return null;
+    const parts = authHeader.split(' ');
+    if (parts.length === 2 && /^bearer$/i.test(parts[0])) {
+        return parts[1];
+    }
+    return null;
+}
+
+// =========================================================================
+// COFFEE PROMOS CRUD (Story 003)
+// =========================================================================
+
+function getCoffeePromos() {
+    const db = getDb();
+    return db.prepare('SELECT id, brand, title, pack_quantity AS packQuantity, format, price, badge, highlight, created_at AS createdAt FROM coffee_promos ORDER BY id ASC').all();
+}
+
+function addCoffeePromo(item) {
+    const db = getDb();
+    const stmt = db.prepare(`
+        INSERT INTO coffee_promos (brand, title, pack_quantity, format, price, badge, highlight)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `);
+    const result = stmt.run(
+        item.brand || 'Coffee',
+        item.title || '',
+        item.packQuantity || '',
+        item.format || '',
+        Number(item.price) || 0,
+        item.badge || 'New',
+        item.highlight || ''
+    );
+    return db.prepare('SELECT id, brand, title, pack_quantity AS packQuantity, format, price, badge, highlight, created_at AS createdAt FROM coffee_promos WHERE id = ?').get(result.lastInsertRowid);
+}
+
+function deleteCoffeePromo(id) {
+    const db = getDb();
+    db.prepare('DELETE FROM coffee_promos WHERE id = ?').run(Number(id));
+}
+
+// =========================================================================
+// CUSTOM BUYER ITEMS & ADMIN PRICING (Story 003)
+// =========================================================================
+
+function getCustomItems() {
+    const db = getDb();
+    return db.prepare('SELECT id, brand, model, pack_price AS packPrice, carton_price AS cartonPrice, created_by AS createdBy, created_at AS createdAt FROM custom_items ORDER BY id DESC').all();
+}
+
+function addCustomItem({ brand, model, packPrice = 7.50, cartonPrice = 75.00, createdBy = 'Buyer' }) {
+    const db = getDb();
+    const cleanBrand = String(brand).trim();
+    const cleanModel = String(model).trim();
+    const existing = db.prepare('SELECT id, brand, model, pack_price AS packPrice, carton_price AS cartonPrice FROM custom_items WHERE LOWER(brand) = LOWER(?) AND LOWER(model) = LOWER(?)').get(cleanBrand, cleanModel);
+    if (existing) return existing;
+
+    const stmt = db.prepare('INSERT INTO custom_items (brand, model, pack_price, carton_price, created_by) VALUES (?, ?, ?, ?, ?)');
+    const res = stmt.run(cleanBrand, cleanModel, Number(packPrice) || 7.50, Number(cartonPrice) || 75.00, createdBy);
+    return db.prepare('SELECT id, brand, model, pack_price AS packPrice, carton_price AS cartonPrice, created_by AS createdBy, created_at AS createdAt FROM custom_items WHERE id = ?').get(res.lastInsertRowid);
+}
+
+function updateCustomItemPrice(id, packPrice, cartonPrice) {
+    const db = getDb();
+    db.prepare('UPDATE custom_items SET pack_price = ?, carton_price = ? WHERE id = ?').run(Number(packPrice), Number(cartonPrice), Number(id));
+    return db.prepare('SELECT id, brand, model, pack_price AS packPrice, carton_price AS cartonPrice, created_by AS createdBy, created_at AS createdAt FROM custom_items WHERE id = ?').get(Number(id));
+}
+
 module.exports = {
     getDb,
     getDatabasePath,
@@ -244,6 +423,20 @@ module.exports = {
     getWeekStartMonday,
     getNextMonday,
     getWeeklyCigaretteTotal,
-    getQuotaStatus
+    getQuotaStatus,
+    getAllSettings,
+    updateSettings,
+    validateAdminCredentials,
+    createAdminSession,
+    verifyAdminSession,
+    deleteAdminSession,
+    extractBearerToken,
+    getCoffeePromos,
+    addCoffeePromo,
+    deleteCoffeePromo,
+    getCustomItems,
+    addCustomItem,
+    updateCustomItemPrice
 };
+
 

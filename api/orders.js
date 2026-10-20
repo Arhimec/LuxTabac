@@ -1,4 +1,4 @@
-const { insertOrder, getRecentOrders, getOrderByCode, getWeeklyCigaretteTotal } = require('./_db.js');
+const { insertOrder, getRecentOrders, getOrderByCode, getWeeklyCigaretteTotal, addCustomItem } = require('./_db.js');
 
 /**
  * Helper to ensure req.body is parsed as an object.
@@ -100,6 +100,28 @@ module.exports = async function handler(req, res) {
                 revolutReference: body.revolutReference,
                 totalCigs: candidateCigs
             });
+
+            // Automatically persist manual custom cigarette items for future buyer catalog visibility
+            if (Array.isArray(body.items)) {
+                body.items.forEach(it => {
+                    if (it.isManual || !it.id || String(it.id).includes('custom') || String(it.id).includes('manual')) {
+                        try {
+                            const isPack = it.format === 'pack';
+                            const packPrice = isPack ? (it.unitPrice || 7.50) : ((it.unitPrice || 75.00) / 10);
+                            const cartonPrice = !isPack ? (it.unitPrice || 75.00) : ((it.unitPrice || 7.50) * 10);
+                            addCustomItem({
+                                brand: it.brand,
+                                model: it.model,
+                                packPrice,
+                                cartonPrice,
+                                createdBy: body.customerName || 'Buyer'
+                            });
+                        } catch (err) {
+                            console.warn('Could not auto-add custom item:', err);
+                        }
+                    }
+                });
+            }
 
             return res.status(201).json({
                 success: true,

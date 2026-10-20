@@ -3,6 +3,10 @@ const fs = require('fs');
 const path = require('path');
 const ordersHandler = require('./api/orders.js');
 const quotaHandler = require('./api/quota.js');
+const adminHandler = require('./api/admin.js');
+const settingsHandler = require('./api/settings.js');
+const coffeePromosHandler = require('./api/coffee-promos.js');
+const customItemsHandler = require('./api/custom-items.js');
 
 const PORT = process.env.PORT || 3000;
 
@@ -37,13 +41,8 @@ const server = http.createServer((req, res) => {
     const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
     const pathname = parsedUrl.pathname;
 
-    // Route: /api/quota
-    if (pathname.startsWith('/api/quota')) {
-        return quotaHandler(req, res);
-    }
-
-    // Route: /api/orders
-    if (pathname.startsWith('/api/orders')) {
+    // API Routes Dispatcher
+    if (pathname.startsWith('/api/')) {
         let bodyBuffer = '';
         req.on('data', chunk => {
             bodyBuffer += chunk;
@@ -58,7 +57,15 @@ const server = http.createServer((req, res) => {
             } else {
                 req.body = {};
             }
-            ordersHandler(req, res);
+
+            if (pathname.startsWith('/api/quota')) return quotaHandler(req, res);
+            if (pathname.startsWith('/api/orders')) return ordersHandler(req, res);
+            if (pathname.startsWith('/api/admin')) return adminHandler(req, res);
+            if (pathname.startsWith('/api/settings')) return settingsHandler(req, res);
+            if (pathname.startsWith('/api/coffee-promos')) return coffeePromosHandler(req, res);
+            if (pathname.startsWith('/api/custom-items')) return customItemsHandler(req, res);
+
+            return res.status(404).json({ success: false, error: 'API route not found' });
         });
         return;
     }
