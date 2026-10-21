@@ -1,9 +1,9 @@
 # Global Story Index
 
 ## Overview
-- **Total stories**: 18
-- **Generated**: 18 ✅
-- **Last updated**: 2026-10-20T19:48:00Z
+- **Total stories**: 21
+- **Generated**: 21 ✅
+- **Last updated**: 2026-10-21T19:25:00Z
 
 ---
 
@@ -50,16 +50,16 @@
 ### 004-wero-qr-payment-method
 
 #### Unit 001: 001-wero-payment-integration
-- [x] **001-admin-wero-settings.md** ✅ GENERATED: Admin Wero recipient configuration & API persistence - Must - Planned
-- [x] **002-payment-method-selector-tabs.md** ✅ GENERATED: Step 2 payment switcher UI & state coordination - Must - Planned
-- [x] **003-wero-qr-code-generation.md** ✅ GENERATED: Dynamic Wero QR code generation, pay links, and receipt slip sync - Must - Planned
+- [x] **001-admin-wero-settings.md** ✅ GENERATED: Admin Wero recipient configuration & API persistence - Must - Completed
+- [x] **002-payment-method-selector-tabs.md** ✅ GENERATED: Step 2 payment switcher UI & state coordination - Must - Completed
+- [x] **003-wero-qr-code-generation.md** ✅ GENERATED: Dynamic Wero QR code generation, pay links, and receipt slip sync - Must - Completed
 
 ---
 
 ## Stories by Status
 
 - **Total Stories**: 21
-- **Planned**: 3
+- **Planned**: 0
 - **Generated**: 21
 - **In Progress**: 0
-- **Completed**: 18
+- **Completed**: 21

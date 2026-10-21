@@ -482,6 +482,11 @@
                             <p class="text-[11px] text-zinc-500 mb-1.5">Courier chat link or group invite URL (e.g. <code>https://chat.whatsapp.com/...</code> or <code>https://wa.me/352...</code>).</p>
                             <input type="text" id="admin-setting-whatsapp" class="w-full bg-zinc-900 border border-zinc-800 focus:border-amber-500 rounded-xl px-3 py-2 font-mono text-white outline-none">
                         </div>
+                        <div>
+                            <label class="block text-zinc-300 mb-1 font-medium">Wero Recipient (Phone / Handle / Pay Link)</label>
+                            <p class="text-[11px] text-zinc-500 mb-1.5">European Payments Initiative Wero recipient identifier (e.g. <code>+352 691 000 000</code> or Wero link).</p>
+                            <input type="text" id="admin-setting-wero" placeholder="+352 691 000 000" class="w-full bg-zinc-900 border border-zinc-800 focus:border-amber-500 rounded-xl px-3 py-2 font-mono text-white outline-none">
+                        </div>
                         <div class="pt-2 flex items-center justify-between border-t border-zinc-900">
                             <div>
                                 <span class="block text-zinc-200 font-medium">Coffee Showcase Section Visibility</span>
@@ -641,11 +646,9 @@
                 <!-- Step Indicator -->
                 <div class="hidden sm:flex items-center gap-1.5 text-xs font-medium pl-2 border-l border-zinc-800">
                     <span id="step-1-badge"
-                        class="px-2.5 py-1 rounded-lg bg-amber-500 text-zinc-950 font-semibold transition">1.
-                        Order</span>
+                        class="px-2.5 py-1 rounded-lg bg-amber-500 text-zinc-950 font-semibold transition">1. Order</span>
                     <span class="text-zinc-600">/</span>
-                    <span id="step-2-badge" class="px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-400 transition">2.
-                        Revolut QR</span>
+                    <span id="step-2-badge" class="px-2.5 py-1 rounded-lg bg-zinc-800 text-zinc-400 transition">2. Payment</span>
                 </div>
             </div>
         </div>
@@ -1143,41 +1146,57 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Revolut QR Code Card -->
-                <div
-                    class="md:col-span-5 bg-gradient-to-b from-[#0b132b] via-[#0f172a] to-zinc-900 border border-blue-500/30 rounded-3xl p-6 sm:p-7 flex flex-col items-center justify-between text-center shadow-2xl relative overflow-hidden">
+                <!-- Right Column: Dual Payment Card (Revolut & Wero) -->
+                <div id="payment-card-container"
+                    class="md:col-span-5 bg-gradient-to-b from-[#0b132b] via-[#0f172a] to-zinc-900 border border-blue-500/30 rounded-3xl p-6 sm:p-7 flex flex-col items-center justify-between text-center shadow-2xl relative overflow-hidden transition-all duration-300">
 
-                    <div
+                    <div id="payment-card-glow"
                         class="absolute -top-20 -right-20 w-44 h-44 bg-blue-500/20 rounded-full blur-3xl pointer-events-none">
                     </div>
 
-                    <!-- Revolut Branding Header -->
-                    <div class="w-full flex items-center justify-between mb-4">
+                    <!-- Payment Method Selector Tabs -->
+                    <div class="w-full flex rounded-2xl bg-zinc-950/80 p-1 border border-zinc-800 mb-4 gap-1 text-xs font-bold relative z-10">
+                        <button type="button" id="tab-pay-revolut" onclick="window.renderPaymentCard('revolut')"
+                            class="payment-method-tab flex-1 py-2 px-3 rounded-xl bg-blue-600 text-white shadow transition flex items-center justify-center gap-1.5 cursor-pointer">
+                            <span class="font-black text-sm">R</span>
+                            <span>Revolut</span>
+                        </button>
+                        <button type="button" id="tab-pay-wero" onclick="window.renderPaymentCard('wero')"
+                            class="payment-method-tab flex-1 py-2 px-3 rounded-xl bg-transparent hover:bg-zinc-800/80 text-zinc-400 hover:text-white transition flex items-center justify-center gap-1.5 cursor-pointer">
+                            <span>🇪🇺</span>
+                            <span>Wero</span>
+                        </button>
+                    </div>
+
+                    <!-- Payment Branding Header -->
+                    <div class="w-full flex items-center justify-between mb-4 relative z-10">
                         <div class="flex items-center gap-2">
-                            <div
+                            <div id="pay-method-icon"
                                 class="w-8 h-8 rounded-xl bg-white text-slate-950 font-black flex items-center justify-center text-base tracking-tighter shadow">
                                 R
                             </div>
                             <div class="text-left">
-                                <span class="text-sm font-bold text-white block leading-none">Revolut Pay</span>
-                                <span class="text-[11px] text-blue-300">Instant SEPA / P2P Transfer</span>
+                                <span id="pay-method-title" class="text-sm font-bold text-white block leading-none">Revolut Pay</span>
+                                <span id="pay-method-subtitle" class="text-[11px] text-blue-300">Instant SEPA / P2P Transfer</span>
                             </div>
                         </div>
-                        <span id="qr-revtag-pill"
-                            class="px-2.5 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-[11px] font-mono font-semibold">
+                        <span id="qr-recipient-pill"
+                            class="px-2.5 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-[11px] font-mono font-semibold max-w-[150px] truncate">
                             revolut.me/vladimtul
                         </span>
+                        <!-- Hidden alias for backward compatibility -->
+                        <span id="qr-revtag-pill" class="hidden"></span>
                     </div>
 
                     <!-- QR Code Canvas/SVG Box -->
-                    <div class="my-2 bg-white p-4 rounded-3xl shadow-2xl border-4 border-blue-400/20 relative">
+                    <div class="my-2 bg-white p-4 rounded-3xl shadow-2xl border-4 border-blue-400/20 relative z-10">
                         <div id="revolut-qr-container" class="w-52 h-52 flex items-center justify-center">
                             <!-- Dynamically generated SVG QR matrix -->
                         </div>
 
-                        <!-- Center Revolut Badge -->
+                        <!-- Center Payment Badge -->
                         <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div
+                            <div id="qr-center-badge"
                                 class="w-11 h-11 rounded-2xl bg-slate-950 text-white font-black text-lg flex items-center justify-center border-4 border-white shadow-md">
                                 R
                             </div>
@@ -1185,39 +1204,41 @@
                     </div>
 
                     <!-- Amount & Direct Link Actions -->
-                    <div class="w-full mt-4 space-y-2.5">
+                    <div class="w-full mt-4 space-y-2.5 relative z-10">
                         <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3">
-                            <span class="text-[11px] uppercase tracking-wider text-slate-400 block">Scan with Revolut
-                                App or Camera</span>
-                            <p id="qr-amount-badge" class="text-xl font-extrabold text-white font-mono mt-0.5">Send
-                                €77.00</p>
+                            <span id="qr-scan-instruction" class="text-[11px] uppercase tracking-wider text-slate-400 block">Scan with Revolut App or Camera</span>
+                            <p id="qr-amount-badge" class="text-xl font-extrabold text-white font-mono mt-0.5">Send €77.00</p>
                         </div>
 
                         <div class="grid grid-cols-2 gap-2">
-                            <button type="button" id="btn-copy-revolut-link"
+                            <button type="button" id="btn-copy-pay-details"
                                 class="py-2.5 px-3 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-200 text-xs font-semibold transition flex items-center justify-center gap-1.5">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                 </svg>
-                                <span>Copy Link</span>
+                                <span id="copy-pay-btn-label">Copy Link</span>
                             </button>
+                            <!-- Hidden alias for backward compatibility -->
+                            <button type="button" id="btn-copy-revolut-link" class="hidden"></button>
 
-                            <a id="btn-open-revolut-direct" href="https://revolut.me/vladimtul" target="_blank"
+                            <a id="btn-open-pay-direct" href="https://revolut.me/vladimtul" target="_blank"
                                 rel="noopener noreferrer"
                                 class="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition flex items-center justify-center gap-1.5">
-                                <span>Open Revolut</span>
+                                <span id="open-pay-btn-label">Open Revolut</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 shrink-0" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                 </svg>
                             </a>
+                            <!-- Hidden alias for backward compatibility -->
+                            <a id="btn-open-revolut-direct" href="https://revolut.me/vladimtul" target="_blank" class="hidden"></a>
                         </div>
                     </div>
 
-                    <p class="text-[11px] text-slate-400 mt-4 leading-relaxed">
+                    <p id="qr-method-footnote" class="text-[11px] text-slate-400 mt-4 leading-relaxed relative z-10">
                         Scan this QR code with your phone camera or inside the Revolut app to transfer the exact EUR
                         total with zero fees.
                     </p>
@@ -1519,6 +1540,9 @@
                 let isManualMode = false;
                 let selectedUnitFormat = 'carton'; // 'carton' or 'pack'
                 let merchantRevtag = 'vladimtul';
+                let merchantWero = '+352 691 000 000';
+                let selectedPaymentMethod = 'revolut'; // 'revolut' or 'wero'
+                let activeOrderSummary = null; // Stored parameters of current order for instant tab toggling
                 let currentWhatsappLink = 'https://wa.me/';
                 let orderBasket = []; // Array of multi-item objects
                 let currentTipMode = 'none'; // 'none', 'round-5', 'percent-5'
@@ -1569,6 +1593,7 @@
                 // Admin Settings Inputs
                 const adminSettingRevtag = document.getElementById('admin-setting-revtag');
                 const adminSettingWhatsapp = document.getElementById('admin-setting-whatsapp');
+                const adminSettingWero = document.getElementById('admin-setting-wero');
                 const adminSettingCoffeeToggle = document.getElementById('admin-setting-coffee-toggle');
                 const btnSaveAdminSettings = document.getElementById('btn-save-admin-settings');
 
@@ -1702,6 +1727,23 @@
                 const btnCopyFullManifest = document.getElementById('btn-copy-full-manifest');
                 const btnShareWhatsapp = document.getElementById('btn-share-whatsapp');
                 const ageButtonsRow = document.getElementById('age-buttons-row');
+
+                // Dual Payment (Revolut & Wero) Controls
+                const tabPayRevolut = document.getElementById('tab-pay-revolut');
+                const tabPayWero = document.getElementById('tab-pay-wero');
+                const paymentCardContainer = document.getElementById('payment-card-container');
+                const paymentCardGlow = document.getElementById('payment-card-glow');
+                const payMethodIcon = document.getElementById('pay-method-icon');
+                const payMethodTitle = document.getElementById('pay-method-title');
+                const payMethodSubtitle = document.getElementById('pay-method-subtitle');
+                const qrRecipientPill = document.getElementById('qr-recipient-pill');
+                const qrCenterBadge = document.getElementById('qr-center-badge');
+                const qrScanInstruction = document.getElementById('qr-scan-instruction');
+                const btnCopyPayDetails = document.getElementById('btn-copy-pay-details');
+                const copyPayBtnLabel = document.getElementById('copy-pay-btn-label');
+                const btnOpenPayDirect = document.getElementById('btn-open-pay-direct');
+                const openPayBtnLabel = document.getElementById('open-pay-btn-label');
+                const qrMethodFootnote = document.getElementById('qr-method-footnote');
 
                 const toastBanner = document.getElementById('toast-banner');
                 const toastText = document.getElementById('toast-text');
@@ -2301,8 +2343,11 @@
                     document.body.removeChild(textarea);
                 }
 
-                function buildOrderManifestText(orderCode, name, tipAmount, items, total, revRef) {
+                function buildOrderManifestText(orderCode, name, tipAmount, items, total, revRef, payMethod = 'revolut') {
                     const itemLines = items.map(it => `  • ${it.qty}× ${it.brand} ${it.model} (${it.formatLabel}) — €${it.subtotal.toFixed(2)}`).join('\n');
+                    const isWero = payMethod === 'wero';
+                    const paymentLabel = isWero ? 'Wero Instant Pay (QR)' : 'Revolut P2P Transfer';
+                    const recipientLabel = isWero ? `🇪🇺 Wero Recipient: ${merchantWero}` : `💳 Revolut Me: revolut.me/${merchantRevtag}`;
                     return [
                         `🇱🇺 LUXTABAC RESERVE — ORDER #${orderCode}`,
                         `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
@@ -2312,7 +2357,9 @@
                         itemLines,
                         `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
                         `💰 Total Transfer: €${total.toFixed(2)}`,
-                        `💳 Revolut Reference: ${revRef}`,
+                        `💳 Payment Method: ${paymentLabel}`,
+                        recipientLabel,
+                        `📝 Payment Reference: ${revRef}`,
                         `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
                         `Generated via LuxTabac Reserve (18+)`
                     ].filter(Boolean).join('\n');
@@ -2454,6 +2501,7 @@
                             const settings = data.settings || data;
                             if (adminSettingRevtag) adminSettingRevtag.value = settings.revtag || 'vladimtul';
                             if (adminSettingWhatsapp) adminSettingWhatsapp.value = settings.whatsappLink || 'https://wa.me/';
+                            if (adminSettingWero) adminSettingWero.value = settings.weroRecipient || '+352 691 000 000';
                             if (adminSettingCoffeeToggle) adminSettingCoffeeToggle.checked = !!settings.coffeeVisible;
                         }
                     } catch (e) { /* ignore */ }
@@ -2470,6 +2518,10 @@
                             merchantRevtag = settings.revtag;
                             if (qrRevtagPill) qrRevtagPill.textContent = `revolut.me/${settings.revtag}`;
                             if (adminSettingRevtag) adminSettingRevtag.value = settings.revtag;
+                        }
+                        if (settings.weroRecipient) {
+                            merchantWero = settings.weroRecipient;
+                            if (adminSettingWero) adminSettingWero.value = settings.weroRecipient;
                         }
                         if (settings.whatsappLink) {
                             currentWhatsappLink = settings.whatsappLink;
@@ -2543,6 +2595,7 @@
                 async function handleSaveAdminSettings() {
                     if (!adminAuthToken) return;
                     const revtag = (adminSettingRevtag ? adminSettingRevtag.value.trim() : '').replace(/^@+/, '') || 'vladimtul';
+                    const weroRecipient = (adminSettingWero ? adminSettingWero.value.trim() : '') || '+352 691 000 000';
                     const whatsappLink = (adminSettingWhatsapp ? adminSettingWhatsapp.value.trim() : '') || 'https://wa.me/';
                     const coffeeVisible = adminSettingCoffeeToggle ? adminSettingCoffeeToggle.checked : true;
 
@@ -2550,7 +2603,7 @@
                         const res = await fetch('/api/settings', {
                             method: 'PUT',
                             headers: getAdminHeaders(),
-                            body: JSON.stringify({ revtag, whatsappLink, coffeeVisible })
+                            body: JSON.stringify({ revtag, weroRecipient, whatsappLink, coffeeVisible })
                         });
                         if (res.ok) {
                             showToast('Store settings saved successfully!');
@@ -3064,6 +3117,7 @@
                     const revolutReference = `${orderCode} | ${name.split(' ')[0]} - ${firstItemSummary}`;
 
                     // Persist order into SQLite database via /api/orders
+                    // Persist order into SQLite database via /api/orders
                     const orderPayload = {
                         orderCode,
                         customerName: name,
@@ -3073,6 +3127,7 @@
                         tipAmount,
                         grandTotal,
                         revolutReference,
+                        paymentMethod: selectedPaymentMethod,
                         totalCigs: candidateCigs
                     };
 
@@ -3092,6 +3147,16 @@
                         formErrorBox.classList.remove('hidden');
                         return;
                     }
+
+                    // Store active order parameters for instant tab toggling
+                    activeOrderSummary = {
+                        orderCode,
+                        name,
+                        tipAmount,
+                        finalItems,
+                        grandTotal,
+                        revolutReference
+                    };
 
                     // Populate Summary View
                     summaryOrderId.textContent = `#${orderCode}`;
@@ -3119,31 +3184,8 @@
                     </div>
                 `).join('');
 
-                    // Build Revolut Payment Link & Verified ISO QR Code
-                    const revolutUrl = `https://revolut.me/${encodeURIComponent(merchantRevtag)}?amount=${grandTotal.toFixed(2)}&currency=EUR&note=${encodeURIComponent(revolutReference)}`;
-                    qrRevtagPill.textContent = `revolut.me/${merchantRevtag}`;
-                    qrAmountBadge.textContent = `Send €${grandTotal.toFixed(2)}`;
-                    btnOpenRevolutDirect.href = revolutUrl;
-                    qrContainer.innerHTML = generateRevolutQRSvg(revolutUrl);
-
-                    // Build Full Order Text Manifest for WhatsApp & Clipboard Sharing
-                    currentOrderManifest = buildOrderManifestText(
-                        orderCode,
-                        name,
-                        tipAmount,
-                        finalItems,
-                        grandTotal,
-                        revolutReference
-                    );
-
-                    if (btnShareWhatsapp) {
-                        let waBase = currentWhatsappLink || 'https://wa.me/';
-                        if (!waBase.startsWith('http')) {
-                            waBase = `https://wa.me/${waBase.replace(/^@/, '')}`;
-                        }
-                        const sep = waBase.includes('?') ? '&' : '?';
-                        btnShareWhatsapp.href = `${waBase}${sep}text=${encodeURIComponent(currentOrderManifest)}`;
-                    }
+                    // Render active payment method card (Revolut or Wero)
+                    renderPaymentCard(selectedPaymentMethod);
 
                     // Switch to Payment View
                     paymentConfirmedBox.classList.add('hidden');
@@ -3156,7 +3198,160 @@
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
 
-                // Copy Reference, Full Manifest & Revolut Link
+                // =========================================================================
+                // 10.4. DUAL PAYMENT CARD RENDERER (REVOLUT & WERO)
+                // =========================================================================
+                function renderPaymentCard(method) {
+                    selectedPaymentMethod = method;
+                    const isWero = method === 'wero';
+
+                    // Switch Tab Active Styles
+                    if (tabPayRevolut && tabPayWero) {
+                        if (isWero) {
+                            tabPayRevolut.className = 'payment-method-tab flex-1 py-2 px-3 rounded-xl bg-transparent hover:bg-zinc-800/80 text-zinc-400 hover:text-white transition flex items-center justify-center gap-1.5';
+                            tabPayWero.className = 'payment-method-tab flex-1 py-2 px-3 rounded-xl bg-emerald-600 text-white shadow transition flex items-center justify-center gap-1.5';
+                        } else {
+                            tabPayRevolut.className = 'payment-method-tab flex-1 py-2 px-3 rounded-xl bg-blue-600 text-white shadow transition flex items-center justify-center gap-1.5';
+                            tabPayWero.className = 'payment-method-tab flex-1 py-2 px-3 rounded-xl bg-transparent hover:bg-zinc-800/80 text-zinc-400 hover:text-white transition flex items-center justify-center gap-1.5';
+                        }
+                    }
+
+                    // Card Glow & Borders
+                    if (paymentCardContainer) {
+                        paymentCardContainer.className = isWero
+                            ? 'md:col-span-5 bg-gradient-to-b from-[#062016] via-[#0b291d] to-zinc-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-7 flex flex-col items-center justify-between text-center shadow-2xl relative overflow-hidden transition-all duration-300'
+                            : 'md:col-span-5 bg-gradient-to-b from-[#0b132b] via-[#0f172a] to-zinc-900 border border-blue-500/30 rounded-3xl p-6 sm:p-7 flex flex-col items-center justify-between text-center shadow-2xl relative overflow-hidden transition-all duration-300';
+                    }
+
+                    if (paymentCardGlow) {
+                        paymentCardGlow.className = isWero
+                            ? 'absolute -top-20 -right-20 w-44 h-44 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none'
+                            : 'absolute -top-20 -right-20 w-44 h-44 bg-blue-500/20 rounded-full blur-3xl pointer-events-none';
+                    }
+
+                    // Branding & Icons
+                    if (payMethodIcon) {
+                        payMethodIcon.innerHTML = isWero ? '🇪🇺' : 'R';
+                        payMethodIcon.className = isWero
+                            ? 'w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-300 font-black flex items-center justify-center text-base tracking-tighter border border-emerald-400/30 shadow'
+                            : 'w-8 h-8 rounded-xl bg-white text-slate-950 font-black flex items-center justify-center text-base tracking-tighter shadow';
+                    }
+
+                    if (payMethodTitle) {
+                        payMethodTitle.textContent = isWero ? 'Wero Instant Pay' : 'Revolut Pay';
+                    }
+
+                    if (payMethodSubtitle) {
+                        payMethodSubtitle.textContent = isWero ? 'European Account-to-Account QR' : 'Instant SEPA / P2P Transfer';
+                        payMethodSubtitle.className = isWero ? 'text-[11px] text-emerald-300' : 'text-[11px] text-blue-300';
+                    }
+
+                    if (qrRecipientPill) {
+                        qrRecipientPill.textContent = isWero ? `wero: ${merchantWero}` : `revolut.me/${merchantRevtag}`;
+                        qrRecipientPill.className = isWero
+                            ? 'px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-200 text-[11px] font-mono font-semibold max-w-[150px] truncate'
+                            : 'px-2.5 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-200 text-[11px] font-mono font-semibold max-w-[150px] truncate';
+                    }
+
+                    if (qrRevtagPill) {
+                        qrRevtagPill.textContent = `revolut.me/${merchantRevtag}`;
+                    }
+
+                    if (qrCenterBadge) {
+                        qrCenterBadge.innerHTML = isWero ? '🇪🇺' : 'R';
+                        qrCenterBadge.className = isWero
+                            ? 'w-11 h-11 rounded-2xl bg-emerald-950 text-white font-black text-lg flex items-center justify-center border-4 border-emerald-400 shadow-md'
+                            : 'w-11 h-11 rounded-2xl bg-slate-950 text-white font-black text-lg flex items-center justify-center border-4 border-white shadow-md';
+                    }
+
+                    if (qrScanInstruction) {
+                        qrScanInstruction.textContent = isWero ? 'Scan with Wero or Banking App' : 'Scan with Revolut App or Camera';
+                    }
+
+                    if (copyPayBtnLabel) {
+                        copyPayBtnLabel.textContent = isWero ? 'Copy Info' : 'Copy Link';
+                    }
+
+                    if (openPayBtnLabel) {
+                        openPayBtnLabel.textContent = isWero ? 'Pay with Wero' : 'Open Revolut';
+                    }
+
+                    if (btnCopyPayDetails) {
+                        btnCopyPayDetails.className = isWero
+                            ? 'py-2.5 px-3 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-200 text-xs font-semibold transition flex items-center justify-center gap-1.5'
+                            : 'py-2.5 px-3 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-200 text-xs font-semibold transition flex items-center justify-center gap-1.5';
+                    }
+
+                    if (btnOpenPayDirect) {
+                        btnOpenPayDirect.className = isWero
+                            ? 'py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center justify-center gap-1.5'
+                            : 'py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition flex items-center justify-center gap-1.5';
+                    }
+
+                    if (qrMethodFootnote) {
+                        qrMethodFootnote.textContent = isWero
+                            ? 'Scan this QR code with your Wero wallet or European banking app (BGL BNP Paribas, Spuerkeess, BIL, ING) for zero-fee instant settlement.'
+                            : 'Scan this QR code with your phone camera or inside the Revolut app to transfer the exact EUR total with zero fees.';
+                    }
+
+                    // Regenerate QR Code & Direct Payment Action URL
+                    if (activeOrderSummary) {
+                        const { orderCode, name, tipAmount, finalItems, grandTotal, revolutReference } = activeOrderSummary;
+                        if (qrAmountBadge) qrAmountBadge.textContent = `Send €${grandTotal.toFixed(2)}`;
+
+                        let paymentUrl = '';
+                        if (isWero) {
+                            paymentUrl = merchantWero.startsWith('http')
+                                ? `${merchantWero}?amount=${grandTotal.toFixed(2)}&ref=${encodeURIComponent(revolutReference)}`
+                                : `wero://pay?recipient=${encodeURIComponent(merchantWero)}&amount=${grandTotal.toFixed(2)}&currency=EUR&ref=${encodeURIComponent(revolutReference)}`;
+                        } else {
+                            paymentUrl = `https://revolut.me/${encodeURIComponent(merchantRevtag)}?amount=${grandTotal.toFixed(2)}&currency=EUR&note=${encodeURIComponent(revolutReference)}`;
+                        }
+
+                        if (btnOpenPayDirect) btnOpenPayDirect.href = paymentUrl;
+                        if (btnOpenRevolutDirect) btnOpenRevolutDirect.href = paymentUrl;
+
+                        if (qrContainer) qrContainer.innerHTML = generateRevolutQRSvg(paymentUrl);
+
+                        // Build Full Order Text Manifest for WhatsApp & Clipboard Sharing
+                        currentOrderManifest = buildOrderManifestText(
+                            orderCode,
+                            name,
+                            tipAmount,
+                            finalItems,
+                            grandTotal,
+                            revolutReference,
+                            method
+                        );
+
+                        if (btnShareWhatsapp) {
+                            let waBase = currentWhatsappLink || 'https://wa.me/';
+                            if (!waBase.startsWith('http')) {
+                                waBase = `https://wa.me/${waBase.replace(/^@/, '')}`;
+                            }
+                            const sep = waBase.includes('?') ? '&' : '?';
+                            btnShareWhatsapp.href = `${waBase}${sep}text=${encodeURIComponent(currentOrderManifest)}`;
+                        }
+                    }
+                }
+                window.renderPaymentCard = renderPaymentCard;
+
+                // Payment Tab Switchers
+                if (tabPayRevolut) {
+                    tabPayRevolut.addEventListener('click', () => {
+                        renderPaymentCard('revolut');
+                        showToast('Switched to Revolut Pay');
+                    });
+                }
+
+                if (tabPayWero) {
+                    tabPayWero.addEventListener('click', () => {
+                        renderPaymentCard('wero');
+                        showToast('Switched to Wero Instant Pay (QR)');
+                    });
+                }
+
+                // Copy Reference, Full Manifest & Direct Payment Link/Details
                 btnCopyRef.addEventListener('click', () => {
                     copyTextToClipboard(paymentRefCode.textContent.trim(), 'Transfer reference note copied!');
                 });
@@ -3169,6 +3364,20 @@
                     });
                 }
 
+                if (btnCopyPayDetails) {
+                    btnCopyPayDetails.addEventListener('click', () => {
+                        if (selectedPaymentMethod === 'wero') {
+                            const weroDetails = activeOrderSummary
+                                ? `Wero Recipient: ${merchantWero}\nAmount: €${activeOrderSummary.grandTotal.toFixed(2)}\nReference: ${activeOrderSummary.revolutReference}`
+                                : `Wero Recipient: ${merchantWero}`;
+                            copyTextToClipboard(weroDetails, 'Wero transfer details copied!');
+                        } else {
+                            const link = btnOpenPayDirect ? btnOpenPayDirect.href : `https://revolut.me/${merchantRevtag}`;
+                            copyTextToClipboard(link, 'Revolut.me payment link copied!');
+                        }
+                    });
+                }
+
                 btnCopyRevolutLink.addEventListener('click', () => {
                     copyTextToClipboard(btnOpenRevolutDirect.href, 'Revolut.me payment link copied!');
                 });
@@ -3176,7 +3385,8 @@
                 // Confirm Transfer Sent
                 btnConfirmPaid.addEventListener('click', () => {
                     paymentConfirmedBox.classList.remove('hidden');
-                    showToast('Revolut transfer logged! Don\'t forget to share your order details.');
+                    const methodLabel = selectedPaymentMethod === 'wero' ? 'Wero' : 'Revolut';
+                    showToast(`${methodLabel} transfer logged! Don't forget to share your order details.`);
                     paymentConfirmedBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 });
 
@@ -3476,7 +3686,7 @@
                         '----------------------------------------',
                         tipText,
                         `TOTAL PAID:  EUR ${Number(order.grandTotal).toFixed(2)}`,
-                        `PAYMENT:     Revolut P2P Transfer`,
+                        `PAYMENT:     ${order.paymentMethod === 'wero' ? 'Wero Instant Pay' : 'Revolut P2P Transfer'}`,
                         `REFERENCE:   ${order.revolutReference || 'N/A'}`,
                         '========================================',
                         '   Loi modifiée du 11 août 2006 (18+)   ',

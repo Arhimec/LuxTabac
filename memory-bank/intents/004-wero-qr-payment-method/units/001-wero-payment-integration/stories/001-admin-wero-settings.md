@@ -5,7 +5,7 @@
 - **Unit**: `001-wero-payment-integration`
 - **Intent**: `004-wero-qr-payment-method`
 - **Priority**: Must
-- **Status**: Planned
+- **Status**: Completed
 
 ## Description
 As a store administrator,

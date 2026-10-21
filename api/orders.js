@@ -98,7 +98,8 @@ module.exports = async function handler(req, res) {
                 grandTotal: body.grandTotal,
                 tipAmount: body.tipAmount,
                 revolutReference: body.revolutReference,
-                totalCigs: candidateCigs
+                totalCigs: candidateCigs,
+                paymentMethod: body.paymentMethod || 'revolut'
             });
 
             // Automatically persist manual custom cigarette items for future buyer catalog visibility

@@ -91,12 +91,19 @@ function getDb() {
             // column already exists
         }
 
+        try {
+            dbInstance.exec("ALTER TABLE orders ADD COLUMN payment_method TEXT DEFAULT 'revolut';");
+        } catch {
+            // column already exists
+        }
+
         // Seed default app_settings
         dbInstance.exec(`
             INSERT OR IGNORE INTO app_settings (key, value) VALUES 
             ('revtag', 'vladimtul'),
             ('whatsapp_link', 'https://wa.me/'),
-            ('coffee_visible', '1');
+            ('coffee_visible', '1'),
+            ('wero_recipient', '+352 691 000 000');
         `);
 
         // Seed default coffee promos if empty
@@ -131,6 +138,7 @@ function insertOrder(order) {
     const tipAmount = Number(order.tipAmount) || 0;
     const revolutReference = order.revolutReference ? String(order.revolutReference).trim() : null;
     const totalCigs = Number(order.totalCigs) || 0;
+    const paymentMethod = order.paymentMethod ? String(order.paymentMethod).trim() : 'revolut';
 
     const insertStmt = db.prepare(`
         INSERT INTO orders (
@@ -142,8 +150,9 @@ function insertOrder(order) {
             grand_total,
             tip_amount,
             revolut_reference,
-            total_cigs
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            total_cigs,
+            payment_method
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     insertStmt.run(
@@ -155,7 +164,8 @@ function insertOrder(order) {
         grandTotal,
         tipAmount,
         revolutReference,
-        totalCigs
+        totalCigs,
+        paymentMethod
     );
 
     return getOrderByCode(orderCode);
@@ -191,6 +201,7 @@ function getRecentOrders(limit = 50) {
             grandTotal: Number(row.grand_total),
             tipAmount: Number(row.tip_amount) || 0,
             revolutReference: row.revolut_reference,
+            paymentMethod: row.payment_method || 'revolut',
             totalCigs: Number(row.total_cigs),
             createdAt: row.created_at
         };
@@ -228,6 +239,7 @@ function getOrderByCode(orderCode) {
         grandTotal: Number(row.grand_total),
         tipAmount: Number(row.tip_amount) || 0,
         revolutReference: row.revolut_reference,
+        paymentMethod: row.payment_method || 'revolut',
         totalCigs: Number(row.total_cigs),
         createdAt: row.created_at
     };
@@ -301,7 +313,8 @@ function getAllSettings() {
     return {
         revtag: map.revtag || 'vladimtul',
         whatsappLink: map.whatsapp_link || 'https://wa.me/',
-        coffeeVisible: map.coffee_visible !== '0'
+        coffeeVisible: map.coffee_visible !== '0',
+        weroRecipient: map.wero_recipient || '+352 691 000 000'
     };
 }
 
@@ -311,6 +324,7 @@ function updateSettings(updates = {}) {
     if (typeof updates.revtag !== 'undefined') upsert.run('revtag', String(updates.revtag).trim());
     if (typeof updates.whatsappLink !== 'undefined') upsert.run('whatsapp_link', String(updates.whatsappLink).trim());
     if (typeof updates.coffeeVisible !== 'undefined') upsert.run('coffee_visible', updates.coffeeVisible ? '1' : '0');
+    if (typeof updates.weroRecipient !== 'undefined') upsert.run('wero_recipient', String(updates.weroRecipient).trim());
     return getAllSettings();
 }
 

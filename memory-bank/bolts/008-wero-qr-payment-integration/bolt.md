@@ -3,16 +3,19 @@ id: 008-wero-qr-payment-integration
 unit: 001-wero-payment-integration
 intent: 004-wero-qr-payment-method
 type: simple-construction-bolt
-status: planned
+status: complete
 stories:
   - 001-admin-wero-settings
   - 002-payment-method-selector-tabs
   - 003-wero-qr-code-generation
 created: '2026-10-20T21:35:00Z'
-started: null
-completed: null
-current_stage: 1. Plan
-stages_completed: []
+started: '2026-10-20T21:40:00Z'
+completed: '2026-10-21T19:20:00Z'
+current_stage: 3. Test
+stages_completed:
+  - 1. Plan
+  - 2. Implement
+  - 3. Test
 requires_bolts:
   - 007-admin-portal-and-backoffice
 enables_bolts: []
@@ -52,6 +55,6 @@ Implement Wero (European Payments Initiative instant account-to-account wallet) 
 
 ## Stages
 
-- [ ] **1. Plan**: Pending → implementation-plan.md
-- [ ] **2. Implement**: Pending → api/_db.js, api/settings.js, index.html
-- [ ] **3. Test**: Pending → test-walkthrough.md
+- [x] **1. Plan**: Complete → implementation-plan.md
+- [x] **2. Implement**: Complete → api/_db.js, api/settings.js, api/orders.js, index.html
+- [x] **3. Test**: Complete → tests/bolt-008.test.js, test-walkthrough.md
