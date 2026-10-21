@@ -1,7 +1,7 @@
 ---
-version: 1.0.0
-environment: dev
-deployed: 2026-10-19T22:01:45Z
+version: 1.1.0
+environment: prod
+deployed: 2026-10-21T19:26:00Z
 deployed_by: operations-agent
 status: success
 ---
@@ -92,6 +92,25 @@ vercel rollback prod
   - Added the missing closing `</div>`, completely restoring normal DOM layout.
 - **Verification**: Verified via Playwright / Browser Agent screenshot showing full active catalog and order form.
 - **Automated Tests**: 15 / 15 tests passing.
+
+---
+
+## Deployment: v1.1.0 → Production (Vercel Production via GitHub Push)
+
+### Details
+- **Version**: `v1.1.0`
+- **Environment**: Production (`vercel-production`)
+- **Timestamp**: `2026-10-21T19:26:00Z`
+- **Commit**: `937df9d` (*feat(bolt-008): wero qr payment integration and admin settings*)
+- **Status**: ✅ Deployed & Healthy
+- **Scope & Releases**:
+  - **Bolt 005**: Single 5€ round up tip, 5% floor rounding, full cigarette catalog without chopped tobacco, and buyer name reorder pre-filtering.
+  - **Bolt 006**: Weekly quota governance enforcing maximum 800 cigarettes per calendar week, automatic Monday 00:00 UTC quota reset, quota meter, and modal limit warnings.
+  - **Bolt 007**: Protected admin portal (`/api/admin`), centralized app settings management (Revtag, WhatsApp recipient, Coffee promo visibility toggle), custom brand submissions with admin price adjustments.
+  - **Bolt 008**: European instant account-to-account wallet **Wero** payment method, dual-tab switcher in Step 2 (`#tab-pay-revolut` / `#tab-pay-wero`), dynamic Wero QR code generation, direct action deep-linking, recipient badge pill, and manifest/receipt sync.
+- **Automated Tests**: 45 / 45 tests passing.
+- **Verification**: Verified via Playwright / Browser Agent automated tests and screenshots.
+
 
 
 
