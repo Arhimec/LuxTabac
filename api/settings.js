@@ -32,7 +32,7 @@ module.exports = async function handler(req, res) {
     try {
         if (req.method === 'GET') {
             const settings = getAllSettings();
-            return res.status(200).json({ success: true, settings });
+            return res.status(200).json({ success: true, settings, envConfigured: settings.envConfigured });
         }
 
         if (req.method === 'POST' || req.method === 'PUT') {
@@ -44,7 +44,7 @@ module.exports = async function handler(req, res) {
 
             const body = parseRequestBody(req);
             const updated = updateSettings(body);
-            return res.status(200).json({ success: true, settings: updated });
+            return res.status(200).json({ success: true, settings: updated, envConfigured: updated.envConfigured });
         }
 
         return res.status(405).json({ success: false, error: `Method ${req.method} Not Allowed` });

@@ -302,19 +302,51 @@ function getQuotaStatus(refDate = new Date()) {
 }
 
 // =========================================================================
-// SETTINGS MANAGEMENT (Story 002)
+// SETTINGS MANAGEMENT (Story 002 & Bolt 009)
 // =========================================================================
+
+function formatWhatsAppLink(rawNumberOrLink) {
+    if (!rawNumberOrLink) return 'https://wa.me/';
+    const str = String(rawNumberOrLink).trim();
+    if (str.startsWith('http://') || str.startsWith('https://')) {
+        return str;
+    }
+    const digitsOnly = str.replace(/[^\d]/g, '');
+    return digitsOnly ? `https://wa.me/${digitsOnly}` : 'https://wa.me/';
+}
 
 function getAllSettings() {
     const db = getDb();
     const rows = db.prepare('SELECT key, value FROM app_settings').all();
     const map = {};
     rows.forEach(r => { map[r.key] = r.value; });
+
+    // Environment parameters (configured in GitHub Repository Variables/Secrets or process.env)
+    const envRevtag = process.env.REVOLUT_REVTAG || process.env.REVTAG;
+    const envWhatsAppNumber = process.env.WHATSAPP_NUMBER;
+    const envWhatsAppLink = process.env.WHATSAPP_LINK;
+    const envWero = process.env.WERO_RECIPIENT || process.env.WERO_NUMBER;
+
+    let whatsapp = map.whatsapp_link || 'https://wa.me/';
+    if (envWhatsAppNumber) {
+        whatsapp = formatWhatsAppLink(envWhatsAppNumber);
+    } else if (envWhatsAppLink) {
+        whatsapp = formatWhatsAppLink(envWhatsAppLink);
+    }
+
+    const resolvedRevtag = (envRevtag ? String(envRevtag).trim().replace(/^@+/, '') : null) || map.revtag || 'vladimtul';
+    const resolvedWero = (envWero ? String(envWero).trim() : null) || map.wero_recipient || '+352 691 000 000';
+
     return {
-        revtag: map.revtag || 'vladimtul',
-        whatsappLink: map.whatsapp_link || 'https://wa.me/',
+        revtag: resolvedRevtag,
+        whatsappLink: whatsapp,
         coffeeVisible: map.coffee_visible !== '0',
-        weroRecipient: map.wero_recipient || '+352 691 000 000'
+        weroRecipient: resolvedWero,
+        envConfigured: {
+            revtag: Boolean(envRevtag),
+            whatsapp: Boolean(envWhatsAppNumber || envWhatsAppLink),
+            wero: Boolean(envWero)
+        }
     };
 }
 
@@ -450,7 +482,8 @@ module.exports = {
     deleteCoffeePromo,
     getCustomItems,
     addCustomItem,
-    updateCustomItemPrice
+    updateCustomItemPrice,
+    formatWhatsAppLink
 };
 
 

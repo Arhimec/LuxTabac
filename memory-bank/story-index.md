@@ -54,12 +54,17 @@
 - [x] **002-payment-method-selector-tabs.md** ✅ GENERATED: Step 2 payment switcher UI & state coordination - Must - Completed
 - [x] **003-wero-qr-code-generation.md** ✅ GENERATED: Dynamic Wero QR code generation, pay links, and receipt slip sync - Must - Completed
 
+### 005-persistent-environment-configuration
+
+#### Unit 001: 001-env-parameter-governance
+- [x] **001-merchant-env-parameters.md** ✅ GENERATED: Consistent merchant parameters (Revtag, WhatsApp, Wero) via GitHub/process.env - Must - Completed
+
 ---
 
 ## Stories by Status
 
-- **Total Stories**: 21
+- **Total Stories**: 22
 - **Planned**: 0
-- **Generated**: 21
+- **Generated**: 22
 - **In Progress**: 0
-- **Completed**: 21
+- **Completed**: 22
