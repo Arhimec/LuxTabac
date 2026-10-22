@@ -65,19 +65,22 @@ module.exports = async function handler(req, res) {
                 });
             }
 
-            // Calculate candidate order total cigarettes
+            // Calculate candidate order total cigarettes (coffee and non-tobacco items count as 0)
             const candidateCigs = typeof body.totalCigs !== 'undefined'
                 ? Number(body.totalCigs)
                 : body.items.reduce((sum, item) => {
-                    const itemCigs = typeof item.cigs !== 'undefined'
-                        ? Number(item.cigs)
-                        : (item.format === 'carton' ? 200 : 20) * (Number(item.quantity) || 1);
+                    if (item.category === 'coffee' || item.isCoffee) return sum;
+                    const itemCigs = typeof item.totalCigs !== 'undefined'
+                        ? Number(item.totalCigs)
+                        : (typeof item.cigs !== 'undefined'
+                            ? Number(item.cigs)
+                            : (item.format === 'carton' ? 200 : 20) * (Number(item.quantity || item.qty) || 1));
                     return sum + itemCigs;
                 }, 0);
 
             // Enforce weekly quota (800 cigarettes per calendar week across all consignments)
             const currentWeeklyUsed = getWeeklyCigaretteTotal();
-            if (currentWeeklyUsed + candidateCigs > 800) {
+            if (candidateCigs > 0 && (currentWeeklyUsed + candidateCigs > 800)) {
                 return res.status(400).json({
                     success: false,
                     error: 'WEEKLY_QUOTA_EXCEEDED',
@@ -102,10 +105,11 @@ module.exports = async function handler(req, res) {
                 paymentMethod: body.paymentMethod || 'revolut'
             });
 
-            // Automatically persist manual custom cigarette items for future buyer catalog visibility
+            // Automatically persist manual custom cigarette items for future buyer catalog visibility (excluding coffee)
             if (Array.isArray(body.items)) {
                 body.items.forEach(it => {
-                    if (it.isManual || !it.id || String(it.id).includes('custom') || String(it.id).includes('manual')) {
+                    const isCoffee = it.category === 'coffee' || it.isCoffee || String(it.id || '').startsWith('coffee_');
+                    if (!isCoffee && (it.isManual || !it.id || String(it.id).includes('custom') || String(it.id).includes('manual'))) {
                         try {
                             const isPack = it.format === 'pack';
                             const packPrice = isPack ? (it.unitPrice || 7.50) : ((it.unitPrice || 75.00) / 10);
